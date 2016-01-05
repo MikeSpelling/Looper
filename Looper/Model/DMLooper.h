@@ -11,7 +11,7 @@
 @interface DMLooper : NSObject
 
 -(void)recordNewLoop;
--(void)stopRecordingLoopAndPlay;
+-(void)stopRecordingLoop;
 -(void)stopAllPlayback;
 -(BOOL)isRecording;
 

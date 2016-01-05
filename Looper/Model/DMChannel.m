@@ -13,11 +13,12 @@
 @property (nonatomic, strong) id<DMChannelDelegate> delegate;
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property (nonatomic, strong) AVAudioRecorder *recorder;
+@property (nonatomic, assign) BOOL playedInLoop;
 @end
 
 @implementation DMChannel
 
--(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(NSUInteger)offset
+-(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(CGFloat)offset
 {
     if (self = [super init]) {
         _delegate = delegate;
@@ -39,6 +40,7 @@
 -(void)record
 {
     [self.recorder record];
+    self.playedInLoop = YES;
 }
 
 -(void)stopRecording
@@ -49,11 +51,27 @@
 -(void)play
 {
     [self.player play];
+    self.playedInLoop = YES;
+    NSLog(@"Play %ld", self.index);
+}
+
+-(void)playIfNeededAtOffset:(CGFloat)offset looped:(BOOL)looped
+{
+    if (looped && !self.isPlaying) {
+        self.playedInLoop = NO;
+    }
+    if (!self.playedInLoop &&
+        !self.isRecording &&
+        offset > self.offset)
+    {
+        [self play];
+    }
 }
 
 -(void)stopPlayback
 {
     [self.player stop];
+    self.playedInLoop = NO;
 }
 
 
@@ -93,9 +111,14 @@
 
 #pragma mark - Overrides
 
--(NSUInteger)duration
+-(CGFloat)duration
 {
     return self.player.duration;
+}
+
+-(CGFloat)currentTime
+{
+    return self.player.currentTime;
 }
 
 -(BOOL)isRecording

@@ -35,7 +35,7 @@
         [self.looper recordNewLoop];
     }
     else {
-        [self.looper stopRecordingLoopAndPlay];
+        [self.looper stopRecordingLoop];
     }
 }
 

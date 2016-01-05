@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @class DMChannel;
 
@@ -21,17 +22,19 @@
 
 @interface DMChannel : NSObject
 
--(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(NSUInteger)offset;
+-(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(CGFloat)offset;
 
 -(void)record;
--(void)play;
--(void)stopPlayback;
 -(void)stopRecording;
+-(void)play;
+-(void)playIfNeededAtOffset:(CGFloat)offset looped:(BOOL)looped;
+-(void)stopPlayback;
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign, readonly) NSUInteger index;
-@property (nonatomic, assign, readonly) NSUInteger offset;
-@property (nonatomic, assign, readonly) NSUInteger duration;
+@property (nonatomic, assign, readonly) CGFloat offset;
+@property (nonatomic, assign, readonly) CGFloat duration;
+@property (nonatomic, assign, readonly) CGFloat currentTime;
 @property (nonatomic, assign, readonly) BOOL isRecording;
 @property (nonatomic, assign, readonly) BOOL isPlaying;
 
