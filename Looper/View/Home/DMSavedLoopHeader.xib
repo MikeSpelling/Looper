@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment version="2048" identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clipsSubviews="YES" contentMode="scaleToFill" id="iN0-l3-epB" customClass="DMSavedLoopHeader">
+            <rect key="frame" x="0.0" y="0.0" width="404" height="134"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bMy-7T-2Hk" userLabel="ContainerView">
+                    <rect key="frame" x="0.0" y="0.0" width="404" height="134"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lNe-Mb-6UC">
+                            <rect key="frame" x="8" y="8" width="118" height="118"/>
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="lNe-Mb-6UC" secondAttribute="height" multiplier="1:1" id="BqM-Jl-4r9"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start new loop" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cze-4n-Kmi">
+                            <rect key="frame" x="134" y="8" width="262" height="118"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                            <color key="textColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wwY-Nb-0di">
+                            <rect key="frame" x="0.0" y="0.0" width="404" height="134"/>
+                            <connections>
+                                <action selector="headerTapped" destination="iN0-l3-epB" eventType="touchUpInside" id="TsB-0T-mRI"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="lNe-Mb-6UC" firstAttribute="top" secondItem="bMy-7T-2Hk" secondAttribute="top" constant="8" id="1tl-aA-pvR"/>
+                        <constraint firstItem="Cze-4n-Kmi" firstAttribute="bottom" secondItem="lNe-Mb-6UC" secondAttribute="bottom" id="DU5-X7-Mrr"/>
+                        <constraint firstAttribute="bottom" secondItem="wwY-Nb-0di" secondAttribute="bottom" id="IlT-9h-GHR"/>
+                        <constraint firstAttribute="trailing" secondItem="Cze-4n-Kmi" secondAttribute="trailing" constant="8" id="Nh2-yC-X6b"/>
+                        <constraint firstItem="wwY-Nb-0di" firstAttribute="top" secondItem="bMy-7T-2Hk" secondAttribute="top" id="OiW-dJ-gfD"/>
+                        <constraint firstItem="Cze-4n-Kmi" firstAttribute="leading" secondItem="lNe-Mb-6UC" secondAttribute="trailing" constant="8" id="ZaA-y9-9Ir"/>
+                        <constraint firstAttribute="trailing" secondItem="wwY-Nb-0di" secondAttribute="trailing" id="dUW-lO-Ayf"/>
+                        <constraint firstItem="wwY-Nb-0di" firstAttribute="leading" secondItem="bMy-7T-2Hk" secondAttribute="leading" id="jm5-90-kO8"/>
+                        <constraint firstAttribute="bottom" secondItem="lNe-Mb-6UC" secondAttribute="bottom" constant="8" id="o9j-LN-Nvw"/>
+                        <constraint firstItem="Cze-4n-Kmi" firstAttribute="top" secondItem="lNe-Mb-6UC" secondAttribute="top" id="qm2-GT-ILk"/>
+                        <constraint firstItem="lNe-Mb-6UC" firstAttribute="leading" secondItem="bMy-7T-2Hk" secondAttribute="leading" constant="8" id="u9h-ql-dd3"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="bMy-7T-2Hk" secondAttribute="trailing" id="CeO-Fc-cMf"/>
+                <constraint firstItem="bMy-7T-2Hk" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="ETE-Ha-kg2"/>
+                <constraint firstAttribute="bottom" secondItem="bMy-7T-2Hk" secondAttribute="bottom" id="Jvu-xs-6C4"/>
+                <constraint firstItem="bMy-7T-2Hk" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="u9n-ow-uaQ"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="button" destination="wwY-Nb-0di" id="wdg-v6-hgk"/>
+            </connections>
+            <point key="canvasLocation" x="182" y="121"/>
+        </view>
+    </objects>
+</document>

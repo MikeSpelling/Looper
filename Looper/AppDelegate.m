@@ -17,6 +17,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
+    [self setupAppearanceProxies];
+    
     return YES;
 }
 
@@ -40,6 +43,19 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+
+#pragma mark - Internal
+
+-(void)setupAppearanceProxies
+{    
+    // Search text colour
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setDefaultTextAttributes:@{
+                                                                                                 NSForegroundColorAttributeName:[UIColor grayColor],
+                                                                                                 NSFontAttributeName:[UIFont fontWithName:@"HelveticaNeue-Light" size:16]
+                                                                                                 }];
+    
 }
 
 @end

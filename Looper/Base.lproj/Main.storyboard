@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1021" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="FK0-wD-zbs">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Loop View Controller-->
@@ -57,7 +58,109 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="459" y="435"/>
+            <point key="canvasLocation" x="989" y="-3"/>
+        </scene>
+        <!--Looper-->
+        <scene sceneID="dUo-ck-X6E">
+            <objects>
+                <viewController extendedLayoutIncludesOpaqueBars="YES" id="2gc-Ta-V9x" customClass="DMHomeViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ray-4e-g5A"/>
+                        <viewControllerLayoutGuide type="bottom" id="4yU-uC-5xB"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="9yO-qH-NJj">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" indicatorStyle="white" delaysContentTouches="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2PT-VB-dGC">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="wgb-ab-WOp">
+                                    <size key="itemSize" width="50" height="50"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                                <connections>
+                                    <outlet property="dataSource" destination="2gc-Ta-V9x" id="KKO-gd-Pis"/>
+                                    <outlet property="delegate" destination="2gc-Ta-V9x" id="m4F-Vu-BrW"/>
+                                </connections>
+                            </collectionView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IOY-hv-GGY" userLabel="HeaderView">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                <subviews>
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3nL-yo-r2g">
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="UB7-Ve-KEi">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="64"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                        </view>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <blurEffect style="light"/>
+                                    </visualEffectView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Looper" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbs-EZ-556">
+                                        <rect key="frame" x="0.0" y="20" width="600" height="44"/>
+                                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="32"/>
+                                        <color key="textColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="calibratedRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.51428571428571423" green="0.02857142857142847" blue="1" alpha="0.5" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="3nL-yo-r2g" firstAttribute="leading" secondItem="IOY-hv-GGY" secondAttribute="leading" id="FtU-LH-p48"/>
+                                    <constraint firstAttribute="bottom" secondItem="fbs-EZ-556" secondAttribute="bottom" id="WLw-CZ-Blz"/>
+                                    <constraint firstItem="fbs-EZ-556" firstAttribute="leading" secondItem="IOY-hv-GGY" secondAttribute="leading" id="b9P-2q-hap"/>
+                                    <constraint firstItem="3nL-yo-r2g" firstAttribute="top" secondItem="IOY-hv-GGY" secondAttribute="top" id="cWd-go-9uh"/>
+                                    <constraint firstAttribute="height" constant="64" id="cXg-ud-djv"/>
+                                    <constraint firstAttribute="trailing" secondItem="3nL-yo-r2g" secondAttribute="trailing" id="gLE-lQ-7wz"/>
+                                    <constraint firstAttribute="bottom" secondItem="3nL-yo-r2g" secondAttribute="bottom" id="gXN-Ko-Ko9"/>
+                                    <constraint firstItem="fbs-EZ-556" firstAttribute="centerX" secondItem="IOY-hv-GGY" secondAttribute="centerX" id="ibS-iP-Grt"/>
+                                    <constraint firstAttribute="trailing" secondItem="fbs-EZ-556" secondAttribute="trailing" id="oD5-Si-1sg"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="2PT-VB-dGC" firstAttribute="leading" secondItem="9yO-qH-NJj" secondAttribute="leading" id="0Lp-wb-LT9"/>
+                            <constraint firstItem="2PT-VB-dGC" firstAttribute="top" secondItem="9yO-qH-NJj" secondAttribute="topMargin" id="6SX-WZ-FRH"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="2PT-VB-dGC" secondAttribute="bottom" id="B08-W4-3N1"/>
+                            <constraint firstItem="IOY-hv-GGY" firstAttribute="leading" secondItem="9yO-qH-NJj" secondAttribute="leading" id="ZRp-5b-Jg6"/>
+                            <constraint firstItem="fbs-EZ-556" firstAttribute="top" secondItem="Ray-4e-g5A" secondAttribute="bottom" id="fwc-ec-M5C"/>
+                            <constraint firstAttribute="trailing" secondItem="2PT-VB-dGC" secondAttribute="trailing" id="gVM-WK-8Hw"/>
+                            <constraint firstAttribute="trailing" secondItem="IOY-hv-GGY" secondAttribute="trailing" id="vOu-dS-TjP"/>
+                            <constraint firstAttribute="topMargin" secondItem="IOY-hv-GGY" secondAttribute="top" id="zmo-vs-3UL"/>
+                        </constraints>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout" bottom="YES"/>
+                    <navigationItem key="navigationItem" title="Looper" id="9yo-qb-kWt"/>
+                    <connections>
+                        <outlet property="collectionView" destination="2PT-VB-dGC" id="ekc-Ff-47T"/>
+                        <outlet property="titleView" destination="IOY-hv-GGY" id="wXk-6i-OBX"/>
+                        <segue destination="BYZ-38-t0r" kind="presentation" identifier="DMPresentLoopViewController" id="0hS-NQ-HvZ"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="TCG-DN-l1P" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="277" y="-5"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="NA9-GA-yht">
+            <objects>
+                <navigationController navigationBarHidden="YES" id="FK0-wD-zbs" customClass="DMNavigationController" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="eRc-i0-MW0">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="2gc-Ta-V9x" kind="relationship" relationship="rootViewController" id="Hpa-W2-quU"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MxL-7s-OIO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-438" y="-10"/>
         </scene>
     </scenes>
 </document>
