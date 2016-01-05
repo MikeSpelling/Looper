@@ -21,6 +21,7 @@
 		90206DB81C3C55C000DDAA73 /* DMSavedLoopCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90206DB71C3C55C000DDAA73 /* DMSavedLoopCell.xib */; };
 		90206DBA1C3C585900DDAA73 /* DMSavedLoopHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90206DB91C3C585900DDAA73 /* DMSavedLoopHeader.xib */; };
 		90206DBD1C3C588F00DDAA73 /* DMSavedLoopHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DBC1C3C588F00DDAA73 /* DMSavedLoopHeader.m */; };
+		90206DC01C3C61C400DDAA73 /* DMLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DBF1C3C61C400DDAA73 /* DMLoop.m */; };
 		90B969581C3C2D9A00DBD7CF /* DMHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B969571C3C2D9A00DBD7CF /* DMHomeViewController.m */; };
 		90B9695B1C3C364200DBD7CF /* DMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B9695A1C3C364200DBD7CF /* DMNavigationController.m */; };
 		90B969621C3C374100DBD7CF /* UIView+DMAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B969611C3C374100DBD7CF /* UIView+DMAutoLayout.m */; };
@@ -70,6 +71,8 @@
 		90206DB91C3C585900DDAA73 /* DMSavedLoopHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMSavedLoopHeader.xib; sourceTree = "<group>"; };
 		90206DBB1C3C588F00DDAA73 /* DMSavedLoopHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSavedLoopHeader.h; sourceTree = "<group>"; };
 		90206DBC1C3C588F00DDAA73 /* DMSavedLoopHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSavedLoopHeader.m; sourceTree = "<group>"; };
+		90206DBE1C3C61C400DDAA73 /* DMLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLoop.h; sourceTree = "<group>"; };
+		90206DBF1C3C61C400DDAA73 /* DMLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLoop.m; sourceTree = "<group>"; };
 		90B969561C3C2D9A00DBD7CF /* DMHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMHomeViewController.h; sourceTree = "<group>"; };
 		90B969571C3C2D9A00DBD7CF /* DMHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMHomeViewController.m; sourceTree = "<group>"; };
 		90B969591C3C364200DBD7CF /* DMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMNavigationController.h; sourceTree = "<group>"; };
@@ -203,6 +206,8 @@
 				900F10EE1C3B261A003FF3B1 /* DMLooper.m */,
 				900F10F01C3B2623003FF3B1 /* DMChannel.h */,
 				900F10F11C3B2623003FF3B1 /* DMChannel.m */,
+				90206DBE1C3C61C400DDAA73 /* DMLoop.h */,
+				90206DBF1C3C61C400DDAA73 /* DMLoop.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -374,6 +379,7 @@
 				900F10AF1C3B2351003FF3B1 /* main.m in Sources */,
 				900F10EB1C3B253C003FF3B1 /* DMLoopViewController.m in Sources */,
 				900F10F21C3B2623003FF3B1 /* DMChannel.m in Sources */,
+				90206DC01C3C61C400DDAA73 /* DMLoop.m in Sources */,
 				90206DB41C3C558A00DDAA73 /* DMSavedLoopCell.m in Sources */,
 				90B969581C3C2D9A00DBD7CF /* DMHomeViewController.m in Sources */,
 				90B969621C3C374100DBD7CF /* UIView+DMAutoLayout.m in Sources */,
