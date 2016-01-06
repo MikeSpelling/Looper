@@ -7,13 +7,11 @@
 //
 
 #import "DMLoopViewController.h"
-#import "DMLooper.h"
+#import "DMTracksViewController.h"
+#import "UIViewController+DMChildHelpers.h"
 
 @interface DMLoopViewController() <UITextFieldDelegate>
-@property (nonatomic, strong) DMLooper *looper;
-
-@property (weak, nonatomic) IBOutlet UIButton *loopButton;
-@property (weak, nonatomic) IBOutlet UIButton *stopPlaybackButton;
+@property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *keyboardDismissButton;
@@ -39,7 +37,7 @@
 {
     [super viewDidLoad];
     
-    self.looper = [DMLooper new];
+    [self dm_addChildViewController:[DMTracksViewController new] toView:self.containerView];
     
     self.titleTextField.text = self.titleLabel.text;
     self.titleTextField.alpha = 0;
@@ -49,27 +47,12 @@
 
 #pragma mark - Actions
 
--(IBAction)loopTapped
+-(IBAction)cancelTapped
 {
-    if (!self.looper.isRecording) {
-        [self.looper recordNewLoop];
-    }
-    else {
-        [self.looper stopRecordingLoop];
-    }
-}
-
--(IBAction)stopPlaybackTapped
-{
-    [self.looper stopAllPlayback];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 -(IBAction)saveTapped
-{
-    NSLog(@"Save tapped");
-}
-
--(IBAction)cancelTapper
 {
     [self dismissViewControllerAnimated:YES completion:nil];
 }

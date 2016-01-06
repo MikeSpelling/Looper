@@ -29,6 +29,7 @@
 -(void)play;
 -(void)playIfNeededAtOffset:(CGFloat)offset looped:(BOOL)looped;
 -(void)stopPlayback;
+-(void)pausePlayback;
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign, readonly) NSUInteger index;

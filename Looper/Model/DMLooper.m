@@ -13,7 +13,6 @@
 @interface DMLooper() <DMChannelDelegate>
 @property (nonatomic, strong) NSMutableArray *channels;
 @property (nonatomic, strong) DMChannel *recordingChannel;
-@property (nonatomic, strong) AVAudioSession *audioSession;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) CGFloat lastKnownPosition;
 @end
@@ -25,15 +24,14 @@
     if (self = [super init]) {
         _channels = [NSMutableArray new];
         
-        _audioSession = [AVAudioSession sharedInstance];
-        [_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     return self;
 }
 
 -(void)recordNewLoop
 {
-    [self.audioSession setActive:YES error:nil];
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
     
     DMChannel *channel = [[DMChannel alloc] initWithDelegate:self index:self.channels.count offset:self.lastKnownPosition];
     [channel record];
@@ -54,14 +52,33 @@
     self.recordingChannel = nil;
 }
 
--(void)stopAllPlayback
+-(void)stopPlayback
 {
     for (DMChannel *channel in self.channels) {
         [channel stopPlayback];
     }
     
-    [self.audioSession setActive:NO error:nil];
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
     [self stopTimer];
+}
+
+-(void)pausePlayback
+{
+    for (DMChannel *channel in self.channels) {
+        [channel pausePlayback];
+    }
+    
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    [self stopTimer];
+}
+
+-(void)play
+{
+    for (DMChannel *channel in self.channels) {
+        [channel play];
+    }
+    [self startLoopTimer];
+    [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
 -(BOOL)isRecording
@@ -79,6 +96,9 @@
 
 -(void)startLoopTimer
 {
+    if (self.timer) {
+        [self stopTimer];
+    }
     self.timer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
 }
 

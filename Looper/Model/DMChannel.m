@@ -10,7 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface DMChannel() <AVAudioRecorderDelegate, AVAudioPlayerDelegate>
-@property (nonatomic, strong) id<DMChannelDelegate> delegate;
+@property (nonatomic, weak) id<DMChannelDelegate> delegate;
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property (nonatomic, strong) AVAudioRecorder *recorder;
 @property (nonatomic, assign) BOOL playedInLoop;
@@ -72,6 +72,11 @@
 {
     [self.player stop];
     self.playedInLoop = NO;
+}
+
+-(void)pausePlayback
+{
+    [self.player pause];
 }
 
 

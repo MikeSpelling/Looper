@@ -22,6 +22,10 @@
 		90206DBA1C3C585900DDAA73 /* DMSavedLoopHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90206DB91C3C585900DDAA73 /* DMSavedLoopHeader.xib */; };
 		90206DBD1C3C588F00DDAA73 /* DMSavedLoopHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DBC1C3C588F00DDAA73 /* DMSavedLoopHeader.m */; };
 		90206DC01C3C61C400DDAA73 /* DMLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DBF1C3C61C400DDAA73 /* DMLoop.m */; };
+		90206DC31C3C6A0E00DDAA73 /* UIView+DMNibLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DC21C3C6A0E00DDAA73 /* UIView+DMNibLoader.m */; };
+		90206DC61C3C6B4B00DDAA73 /* DMTracksView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90206DC51C3C6B4B00DDAA73 /* DMTracksView.xib */; };
+		90206DC91C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DC81C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.m */; };
+		90206DCC1C3C6F5F00DDAA73 /* DMTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90206DCB1C3C6F5F00DDAA73 /* DMTracksViewController.m */; };
 		90B969581C3C2D9A00DBD7CF /* DMHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B969571C3C2D9A00DBD7CF /* DMHomeViewController.m */; };
 		90B9695B1C3C364200DBD7CF /* DMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B9695A1C3C364200DBD7CF /* DMNavigationController.m */; };
 		90B969621C3C374100DBD7CF /* UIView+DMAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B969611C3C374100DBD7CF /* UIView+DMAutoLayout.m */; };
@@ -73,6 +77,13 @@
 		90206DBC1C3C588F00DDAA73 /* DMSavedLoopHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSavedLoopHeader.m; sourceTree = "<group>"; };
 		90206DBE1C3C61C400DDAA73 /* DMLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLoop.h; sourceTree = "<group>"; };
 		90206DBF1C3C61C400DDAA73 /* DMLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLoop.m; sourceTree = "<group>"; };
+		90206DC11C3C6A0E00DDAA73 /* UIView+DMNibLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DMNibLoader.h"; sourceTree = "<group>"; };
+		90206DC21C3C6A0E00DDAA73 /* UIView+DMNibLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DMNibLoader.m"; sourceTree = "<group>"; };
+		90206DC51C3C6B4B00DDAA73 /* DMTracksView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMTracksView.xib; sourceTree = "<group>"; };
+		90206DC71C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+DMChildHelpers.h"; sourceTree = "<group>"; };
+		90206DC81C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+DMChildHelpers.m"; sourceTree = "<group>"; };
+		90206DCA1C3C6F5F00DDAA73 /* DMTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTracksViewController.h; sourceTree = "<group>"; };
+		90206DCB1C3C6F5F00DDAA73 /* DMTracksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTracksViewController.m; sourceTree = "<group>"; };
 		90B969561C3C2D9A00DBD7CF /* DMHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMHomeViewController.h; sourceTree = "<group>"; };
 		90B969571C3C2D9A00DBD7CF /* DMHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMHomeViewController.m; sourceTree = "<group>"; };
 		90B969591C3C364200DBD7CF /* DMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMNavigationController.h; sourceTree = "<group>"; };
@@ -189,12 +200,14 @@
 		900F10E21C3B24C8003FF3B1 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				900F10E91C3B253C003FF3B1 /* DMLoopViewController.h */,
-				900F10EA1C3B253C003FF3B1 /* DMLoopViewController.m */,
 				90B969561C3C2D9A00DBD7CF /* DMHomeViewController.h */,
 				90B969571C3C2D9A00DBD7CF /* DMHomeViewController.m */,
+				900F10E91C3B253C003FF3B1 /* DMLoopViewController.h */,
+				900F10EA1C3B253C003FF3B1 /* DMLoopViewController.m */,
 				90B969591C3C364200DBD7CF /* DMNavigationController.h */,
 				90B9695A1C3C364200DBD7CF /* DMNavigationController.m */,
+				90206DCA1C3C6F5F00DDAA73 /* DMTracksViewController.h */,
+				90206DCB1C3C6F5F00DDAA73 /* DMTracksViewController.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -215,6 +228,7 @@
 		90206DAD1C3C54ED00DDAA73 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				90206DC41C3C6B1D00DDAA73 /* Loop */,
 				90206DB11C3C558A00DDAA73 /* Home */,
 			);
 			path = View;
@@ -233,11 +247,23 @@
 			path = Home;
 			sourceTree = "<group>";
 		};
+		90206DC41C3C6B1D00DDAA73 /* Loop */ = {
+			isa = PBXGroup;
+			children = (
+				90206DC51C3C6B4B00DDAA73 /* DMTracksView.xib */,
+			);
+			path = Loop;
+			sourceTree = "<group>";
+		};
 		90B9695C1C3C36E000DBD7CF /* Categories */ = {
 			isa = PBXGroup;
 			children = (
 				90B969601C3C374100DBD7CF /* UIView+DMAutoLayout.h */,
 				90B969611C3C374100DBD7CF /* UIView+DMAutoLayout.m */,
+				90206DC11C3C6A0E00DDAA73 /* UIView+DMNibLoader.h */,
+				90206DC21C3C6A0E00DDAA73 /* UIView+DMNibLoader.m */,
+				90206DC71C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.h */,
+				90206DC81C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -348,6 +374,7 @@
 				900F10BD1C3B2351003FF3B1 /* LaunchScreen.storyboard in Resources */,
 				900F10BA1C3B2351003FF3B1 /* Assets.xcassets in Resources */,
 				900F10B81C3B2351003FF3B1 /* Main.storyboard in Resources */,
+				90206DC61C3C6B4B00DDAA73 /* DMTracksView.xib in Resources */,
 				90206DB81C3C55C000DDAA73 /* DMSavedLoopCell.xib in Resources */,
 				90206DBA1C3C585900DDAA73 /* DMSavedLoopHeader.xib in Resources */,
 			);
@@ -380,11 +407,14 @@
 				900F10EB1C3B253C003FF3B1 /* DMLoopViewController.m in Sources */,
 				900F10F21C3B2623003FF3B1 /* DMChannel.m in Sources */,
 				90206DC01C3C61C400DDAA73 /* DMLoop.m in Sources */,
+				90206DC31C3C6A0E00DDAA73 /* UIView+DMNibLoader.m in Sources */,
 				90206DB41C3C558A00DDAA73 /* DMSavedLoopCell.m in Sources */,
 				90B969581C3C2D9A00DBD7CF /* DMHomeViewController.m in Sources */,
 				90B969621C3C374100DBD7CF /* UIView+DMAutoLayout.m in Sources */,
+				90206DC91C3C6C1C00DDAA73 /* UIViewController+DMChildHelpers.m in Sources */,
 				900F10EF1C3B261A003FF3B1 /* DMLooper.m in Sources */,
 				90206DBD1C3C588F00DDAA73 /* DMSavedLoopHeader.m in Sources */,
+				90206DCC1C3C6F5F00DDAA73 /* DMTracksViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

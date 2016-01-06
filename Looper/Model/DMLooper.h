@@ -12,7 +12,9 @@
 
 -(void)recordNewLoop;
 -(void)stopRecordingLoop;
--(void)stopAllPlayback;
+-(void)stopPlayback;
+-(void)pausePlayback;
+-(void)play;
 -(BOOL)isRecording;
 
 @end
