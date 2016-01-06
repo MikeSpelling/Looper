@@ -1,5 +1,5 @@
 //
-//  UIViewController+DMChildHelpers.h
+//  UIViewController+DMHelpers.h
 //  Looper
 //
 //  Created by Michael Spelling on 04/01/2016.
@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
-@interface UIViewController (DMChildHelpers)
+@interface UIViewController (DMHelpers)
 
 -(void)dm_addChildViewController:(UIViewController*)childViewController;
 -(void)dm_addChildViewController:(UIViewController*)childViewController toView:(UIView*)view;
 -(void)dm_addExpandingChildViewController:(UIViewController*)childViewController;
 -(void)dm_addExpandingChildViewController:(UIViewController*)childViewController toView:(UIView*)view;
 -(void)dm_removeChildViewController:(UIViewController*)childViewController;
+
++(instancetype)dm_instantiateFromStoryboard;
 
 @end

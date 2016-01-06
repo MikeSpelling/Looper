@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DMLoop.h"
 
 @interface DMLooper : NSObject
+
+-(instancetype)initWithLoop:(DMLoop*)loop;
 
 -(void)recordNewLoop;
 -(void)stopRecordingLoop;
@@ -16,5 +19,7 @@
 -(void)pausePlayback;
 -(void)play;
 -(BOOL)isRecording;
+
+-(NSMutableArray*)channels;
 
 @end

@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DMLoop : NSObject
+@interface DMLoop : NSObject <NSCoding>
 
-@property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) NSArray *channels;
+-(instancetype)initWithTitle:(NSString*)title channels:(NSArray*)channels;
+
+@property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) NSMutableArray *channels;
 
 @end

@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DMLoop.h"
 
 @interface DMLoopViewController : UIViewController
+
+-(instancetype)withLoop:(DMLoop*)loop;
 
 @end

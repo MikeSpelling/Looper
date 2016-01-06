@@ -8,9 +8,13 @@
 
 #import "DMLoopViewController.h"
 #import "DMTracksViewController.h"
-#import "UIViewController+DMChildHelpers.h"
+#import "UIViewController+DMHelpers.h"
 
 @interface DMLoopViewController() <UITextFieldDelegate>
+@property (nonatomic, strong) DMLoop *loop;
+
+@property (nonatomic, strong) DMTracksViewController *tracksViewController;
+
 @property (weak, nonatomic) IBOutlet UIView *containerView;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -28,6 +32,12 @@
     return self;
 }
 
+-(instancetype)withLoop:(DMLoop*)loop
+{
+    _loop = loop;
+    return self;
+}
+
 -(void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -37,8 +47,10 @@
 {
     [super viewDidLoad];
     
-    [self dm_addExpandingChildViewController:[DMTracksViewController new] toView:self.containerView];
+    self.tracksViewController = [[DMTracksViewController alloc] initWithLoop:self.loop];
+    [self dm_addExpandingChildViewController:self.tracksViewController toView:self.containerView];
     
+    self.titleLabel.text = self.loop.title ? self.loop.title : @"Loop1";
     self.titleTextField.text = self.titleLabel.text;
     self.titleTextField.alpha = 0;
     self.keyboardDismissButton.alpha = 0;
@@ -54,6 +66,7 @@
 
 -(IBAction)saveTapped
 {
+    [self.tracksViewController saveLoopNamed:self.titleLabel.text];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

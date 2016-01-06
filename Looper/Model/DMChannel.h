@@ -20,7 +20,7 @@
 @end
 
 
-@interface DMChannel : NSObject
+@interface DMChannel : NSObject <NSCoding>
 
 -(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(CGFloat)offset;
 
@@ -39,7 +39,7 @@
 @property (nonatomic, assign, readonly) BOOL isRecording;
 @property (nonatomic, assign, readonly) BOOL isPlaying;
 
-@property (nonatomic, assign) NSUInteger sampleRate;
+@property (nonatomic, assign) CGFloat sampleRate;
 @property (nonatomic, assign) NSUInteger bitDepth;
 @property (nonatomic, assign) NSUInteger numberOfChannels;
 

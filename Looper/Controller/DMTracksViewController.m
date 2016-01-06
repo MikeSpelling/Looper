@@ -8,6 +8,7 @@
 
 #import "DMTracksViewController.h"
 #import "DMLooper.h"
+#import "DMPersistenceService.h"
 
 @interface DMTracksViewController ()
 @property (nonatomic, strong) DMLooper *looper;
@@ -23,11 +24,17 @@
 
 @implementation DMTracksViewController
 
+-(instancetype)initWithLoop:(DMLoop*)loop
+{
+    if (self = [super initWithNibName:@"DMTracksView" bundle:nil]) {
+        self.looper = [[DMLooper alloc] initWithLoop:loop];
+    }
+    return self;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.looper = [DMLooper new];
     
     self.playButton.alpha = 0;
     self.pauseButton.alpha = 0;
@@ -40,6 +47,15 @@
 -(void)viewWillDisappear:(BOOL)animated
 {
     [self.looper stopPlayback];
+}
+
+
+#pragma mark - DMTracksViewController
+
+-(void)saveLoopNamed:(NSString*)title
+{
+    DMLoop *loop = [[DMLoop alloc] initWithTitle:title channels:[self.looper channels]];
+    [[DMPersistenceService sharedInstance] saveLoop:loop];
 }
 
 

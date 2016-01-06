@@ -8,6 +8,7 @@
 
 #import "DMLooper.h"
 #import "DMChannel.h"
+#import "DMLoop.h"
 #import <AVFoundation/AVFoundation.h>
 
 @interface DMLooper() <DMChannelDelegate>
@@ -19,14 +20,19 @@
 
 @implementation DMLooper
 
--(instancetype)init
+-(instancetype)initWithLoop:(DMLoop*)loop
 {
     if (self = [super init]) {
-        _channels = [NSMutableArray new];
+        _channels = loop.channels ? loop.channels : [NSMutableArray new];
         
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     return self;
+}
+
+-(NSMutableArray*)channels
+{
+    return _channels;
 }
 
 -(void)recordNewLoop

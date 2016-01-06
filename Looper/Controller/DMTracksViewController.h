@@ -7,7 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DMLoop.h"
 
 @interface DMTracksViewController : UIViewController
+
+-(instancetype)initWithLoop:(DMLoop*)loop;
+
+-(void)saveLoopNamed:(NSString*)title;
 
 @end

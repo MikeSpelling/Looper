@@ -7,8 +7,11 @@
 //
 
 #import "DMHomeViewController.h"
+#import "DMLoopViewController.h"
 #import "DMSavedLoopCell.h"
 #import "DMSavedLoopHeader.h"
+#import "DMPersistenceService.h"
+#import "UIViewController+DMHelpers.h"
 
 @interface DMHomeViewController() <UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) NSArray *savedLoops;
@@ -20,12 +23,12 @@
 
 @implementation DMHomeViewController
 
--(instancetype)initWithCoder:(NSCoder *)aDecoder
+-(void)viewWillAppear:(BOOL)animated
 {
-    if (self = [super initWithCoder:aDecoder]) {
-        _savedLoops = [NSArray new];
-    }
-    return self;
+    [super viewWillAppear:animated];
+    
+    self.savedLoops = [[DMPersistenceService sharedInstance] loops];
+    [self.collectionView reloadData];
 }
 
 -(void)viewDidLoad
@@ -47,6 +50,8 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DMSavedLoopCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMSavedLoopCellKey forIndexPath:indexPath];
+    DMLoop *loop = self.savedLoops[indexPath.item];
+    cell.label.text = loop.title;
     return cell;
 }
 
@@ -93,7 +98,9 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Tap");
+    DMLoop *loop = self.savedLoops[indexPath.item];
+    DMLoopViewController *viewController = [[DMLoopViewController dm_instantiateFromStoryboard] withLoop:loop];
+    [self.navigationController presentViewController:viewController animated:YES completion:nil];
 }
 
 

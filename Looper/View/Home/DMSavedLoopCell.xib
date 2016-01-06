@@ -16,7 +16,21 @@
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PV8-oi-1PM">
                         <rect key="frame" x="0.0" y="0.0" width="270" height="132"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJG-9z-7qJ">
+                                <rect key="frame" x="8" y="8" width="254" height="116"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.10588235294117647" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="VJG-9z-7qJ" firstAttribute="leading" secondItem="PV8-oi-1PM" secondAttribute="leading" constant="8" id="Fp6-iR-kk8"/>
+                            <constraint firstAttribute="trailing" secondItem="VJG-9z-7qJ" secondAttribute="trailing" constant="8" id="Zgf-C7-fPX"/>
+                            <constraint firstItem="VJG-9z-7qJ" firstAttribute="top" secondItem="PV8-oi-1PM" secondAttribute="top" constant="8" id="biw-XA-1zR"/>
+                            <constraint firstAttribute="bottom" secondItem="VJG-9z-7qJ" secondAttribute="bottom" constant="8" id="d9u-fV-RcX"/>
+                        </constraints>
                     </view>
                 </subviews>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -28,6 +42,9 @@
                 <constraint firstItem="PV8-oi-1PM" firstAttribute="top" secondItem="mY2-dB-bBf" secondAttribute="top" id="fNN-5H-zdM"/>
                 <constraint firstAttribute="trailing" secondItem="PV8-oi-1PM" secondAttribute="trailing" id="jk0-eQ-hr7"/>
             </constraints>
+            <connections>
+                <outlet property="label" destination="VJG-9z-7qJ" id="VY8-Pg-OTS"/>
+            </connections>
             <point key="canvasLocation" x="320" y="172"/>
         </collectionViewCell>
     </objects>

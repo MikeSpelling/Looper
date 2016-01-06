@@ -9,12 +9,18 @@
 #import "DMChannel.h"
 #import <AVFoundation/AVFoundation.h>
 
+NSString *const DMChannelUrlCodingKey = @"DMChannelUrlCodingKey";
+NSString *const DMChannelSampleRateCodingKey = @"DMChannelSampleRateCodingKey";
+NSString *const DMChannelBitDepthCodingKey = @"DMChannelBitDepthCodingKey";
+NSString *const DMChannelNumberOfChannelsCodingKey = @"DMChannelNumberOfChannelsCodingKey";
+
 @interface DMChannel() <AVAudioRecorderDelegate, AVAudioPlayerDelegate>
 @property (nonatomic, weak) id<DMChannelDelegate> delegate;
 @property (nonatomic, strong) AVAudioPlayer *player;
 @property (nonatomic, strong) AVAudioRecorder *recorder;
 @property (nonatomic, assign) BOOL playedInLoop;
 @end
+
 
 @implementation DMChannel
 
@@ -136,7 +142,7 @@
     return self.player.playing;
 }
 
--(void)setSampleRate:(NSUInteger)sampleRate
+-(void)setSampleRate:(CGFloat)sampleRate
 {
     _sampleRate = sampleRate;
     _recorder = nil;
@@ -184,6 +190,28 @@
         [_recorder prepareToRecord];
     }
     return _recorder;
+}
+
+
+#pragma mark - NSCoding
+
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.url forKey:DMChannelUrlCodingKey];
+    [encoder encodeFloat:self.sampleRate forKey:DMChannelSampleRateCodingKey];
+    [encoder encodeInteger:self.bitDepth forKey:DMChannelBitDepthCodingKey];
+    [encoder encodeInteger:self.numberOfChannels forKey:DMChannelNumberOfChannelsCodingKey];
+}
+
+-(id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        _url = [decoder decodeObjectForKey:DMChannelUrlCodingKey];
+        _sampleRate = [decoder decodeFloatForKey:DMChannelSampleRateCodingKey];
+        _bitDepth = [decoder decodeIntegerForKey:DMChannelBitDepthCodingKey];
+        _numberOfChannels = [decoder decodeIntegerForKey:DMChannelNumberOfChannelsCodingKey];
+    }
+    return self;
 }
 
 @end

@@ -1,15 +1,15 @@
 //
-//  UIViewController+DMChildHelpers.m
+//  UIViewController+DMHelpers.m
 //  Looper
 //
 //  Created by Michael Spelling on 04/01/2016.
 //  Copyright © 2016 DM. All rights reserved.
 //
 
-#import "UIViewController+DMChildHelpers.h"
+#import "UIViewController+DMHelpers.h"
 #import "UIView+DMAutoLayout.h"
 
-@implementation UIViewController (DMChildHelpers)
+@implementation UIViewController (DMHelpers)
 
 -(void)dm_addChildViewController:(UIViewController*)childViewController
 {
@@ -41,6 +41,11 @@
     [childViewController willMoveToParentViewController:nil];
     [childViewController.view removeFromSuperview];
     [childViewController removeFromParentViewController];
+}
+
++(instancetype)dm_instantiateFromStoryboard
+{
+    return [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:NSStringFromClass([self class])];
 }
 
 @end

@@ -12,4 +12,6 @@ extern NSString *const DMSavedLoopCellKey;
 
 @interface DMSavedLoopCell : UICollectionViewCell
 
+@property (nonatomic, weak) IBOutlet UILabel *label;
+
 @end
