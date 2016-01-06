@@ -63,4 +63,14 @@ NSString *const DMPersistenceServiceLoopsKey = @"DMPersistenceServiceLoopsKey";
     return loops;
 }
 
+-(DMLoop*)loopWithTitle:(NSString*)title
+{
+    for (DMLoop *loop in [self loops]) {
+        if ([loop.title isEqualToString:title]) {
+            return loop;
+        }
+    }
+    return nil;
+}
+
 @end

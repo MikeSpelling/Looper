@@ -15,5 +15,6 @@
 
 -(void)saveLoop:(DMLoop*)loop;
 -(NSArray*)loops;
+-(DMLoop*)loopWithTitle:(NSString*)title;
 
 @end

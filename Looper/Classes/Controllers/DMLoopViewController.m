@@ -9,6 +9,8 @@
 #import "DMLoopViewController.h"
 #import "DMTracksViewController.h"
 #import "UIViewController+DMHelpers.h"
+#import "DMPersistenceService.h"
+#import "UIAlertController+DMHelpers.h"
 
 @interface DMLoopViewController() <UITextFieldDelegate>
 @property (nonatomic, strong) DMLoop *loop;
@@ -61,13 +63,37 @@
 
 -(IBAction)cancelTapped
 {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    __weak typeof (self)weakSelf = self;
+    [UIAlertController dm_presentAlertFrom:self
+                                     title:@"Cancelling"
+                                   message:@"All changes will be lost.\nAre you sure you want to continue?"
+                               cancelTitle:@"No"
+                               cancelBlock:nil
+                                otherTitle:@"Yes"
+                                otherBlock:^{
+                                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                                }
+                                otherStyle:UIAlertActionStyleDestructive];
 }
 
 -(IBAction)saveTapped
 {
-    [self.tracksViewController saveLoopNamed:self.titleLabel.text];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    if ([[DMPersistenceService sharedInstance] loopWithTitle:self.titleLabel.text]) {
+        __weak typeof (self)weakSelf = self;
+        [UIAlertController dm_presentAlertFrom:self
+                                         title:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
+                                       message:@"Are you sure you want to continue?"
+                                   cancelTitle:@"No"
+                                   cancelBlock:nil
+                                    otherTitle:@"Yes"
+                                    otherBlock:^{
+                                        [weakSelf saveAndDismiss];
+                                    }
+                                    otherStyle:UIAlertActionStyleDefault];
+    }
+    else {
+        [self saveAndDismiss];
+    }
 }
 
 -(IBAction)titleTapped
@@ -106,6 +132,15 @@
 {
     [textField resignFirstResponder];
     return NO;
+}
+
+
+#pragma mark - Internal
+
+-(void)saveAndDismiss
+{
+    [self.tracksViewController saveLoopNamed:self.titleLabel.text];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
