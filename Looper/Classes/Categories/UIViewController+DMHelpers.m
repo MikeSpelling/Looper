@@ -43,6 +43,31 @@
     [childViewController removeFromParentViewController];
 }
 
+-(void)dm_presentAlertWithTitle:(NSString*)title
+                        message:(NSString*)message
+                    cancelTitle:(NSString*)cancelTitle
+                     otherTitle:(NSString*)otherTitle
+                     otherBlock:(void (^)(void))otherBlock
+                     otherStyle:(UIAlertActionStyle)otherStyle
+{
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title
+                                                                             message:message
+                                                                      preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *otherAction = [UIAlertAction actionWithTitle:otherTitle
+                                                          style:otherStyle
+                                                        handler:^(UIAlertAction *action) {
+                                                            if (otherBlock) {
+                                                                otherBlock();
+                                                            }
+                                                        }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelTitle
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+    [alertController addAction:cancelAction];
+    [alertController addAction:otherAction];
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
 +(instancetype)dm_instantiateFromStoryboard
 {
     return [[UIStoryboard storyboardWithName:@"Main" bundle:nil] instantiateViewControllerWithIdentifier:NSStringFromClass([self class])];

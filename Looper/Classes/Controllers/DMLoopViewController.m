@@ -10,7 +10,6 @@
 #import "DMTracksViewController.h"
 #import "UIViewController+DMHelpers.h"
 #import "DMPersistenceService.h"
-#import "UIAlertController+DMHelpers.h"
 
 @interface DMLoopViewController() <UITextFieldDelegate>
 @property (nonatomic, strong) DMLoop *loop;
@@ -64,32 +63,28 @@
 -(IBAction)cancelTapped
 {
     __weak typeof (self)weakSelf = self;
-    [UIAlertController dm_presentAlertFrom:self
-                                     title:@"Cancelling"
-                                   message:@"All changes will be lost.\nAre you sure you want to continue?"
-                               cancelTitle:@"No"
-                               cancelBlock:nil
-                                otherTitle:@"Yes"
-                                otherBlock:^{
-                                    [weakSelf dismissViewControllerAnimated:YES completion:nil];
-                                }
-                                otherStyle:UIAlertActionStyleDestructive];
+    [self dm_presentAlertWithTitle:@"Cancelling"
+                           message:@"All changes will be lost.\nAre you sure you want to continue?"
+                       cancelTitle:@"No"
+                        otherTitle:@"Yes"
+                        otherBlock:^{
+                            [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                        }
+                        otherStyle:UIAlertActionStyleDestructive];
 }
 
 -(IBAction)saveTapped
 {
     if ([[DMPersistenceService sharedInstance] loopWithTitle:self.titleLabel.text]) {
         __weak typeof (self)weakSelf = self;
-        [UIAlertController dm_presentAlertFrom:self
-                                         title:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
-                                       message:@"Are you sure you want to continue?"
-                                   cancelTitle:@"No"
-                                   cancelBlock:nil
-                                    otherTitle:@"Yes"
-                                    otherBlock:^{
-                                        [weakSelf saveAndDismiss];
-                                    }
-                                    otherStyle:UIAlertActionStyleDefault];
+        [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
+                               message:@"Are you sure you want to continue?"
+                           cancelTitle:@"No"
+                            otherTitle:@"Yes"
+                            otherBlock:^{
+                                [weakSelf saveAndDismiss];
+                            }
+                            otherStyle:UIAlertActionStyleDefault];
     }
     else {
         [self saveAndDismiss];

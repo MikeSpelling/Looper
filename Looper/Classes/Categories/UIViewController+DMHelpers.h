@@ -16,6 +16,13 @@
 -(void)dm_addExpandingChildViewController:(UIViewController*)childViewController toView:(UIView*)view;
 -(void)dm_removeChildViewController:(UIViewController*)childViewController;
 
+-(void)dm_presentAlertWithTitle:(NSString*)title
+                        message:(NSString*)message
+                    cancelTitle:(NSString*)cancelTitle
+                     otherTitle:(NSString*)otherTitle
+                     otherBlock:(void (^)(void))otherBlock
+                     otherStyle:(UIAlertActionStyle)otherStyle;
+
 +(instancetype)dm_instantiateFromStoryboard;
 
 @end

@@ -30,7 +30,6 @@
 		90C21F411C3D58A000057999 /* DMLoopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3B1C3D58A000057999 /* DMLoopViewController.m */; };
 		90C21F421C3D58A000057999 /* DMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3D1C3D58A000057999 /* DMNavigationController.m */; };
 		90C21F431C3D58A000057999 /* DMTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3F1C3D58A000057999 /* DMTracksViewController.m */; };
-		90C21F471C3D58D900057999 /* UIAlertController+DMHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F461C3D58D900057999 /* UIAlertController+DMHelpers.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,8 +93,6 @@
 		90C21F3D1C3D58A000057999 /* DMNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMNavigationController.m; sourceTree = "<group>"; };
 		90C21F3E1C3D58A000057999 /* DMTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTracksViewController.h; sourceTree = "<group>"; };
 		90C21F3F1C3D58A000057999 /* DMTracksViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTracksViewController.m; sourceTree = "<group>"; };
-		90C21F451C3D58D900057999 /* UIAlertController+DMHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertController+DMHelpers.h"; sourceTree = "<group>"; };
-		90C21F461C3D58D900057999 /* UIAlertController+DMHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertController+DMHelpers.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,8 +209,6 @@
 				90C21EEC1C3D57BD00057999 /* UIView+DMNibLoader.m */,
 				90C21EED1C3D57BD00057999 /* UIViewController+DMHelpers.h */,
 				90C21EEE1C3D57BD00057999 /* UIViewController+DMHelpers.m */,
-				90C21F451C3D58D900057999 /* UIAlertController+DMHelpers.h */,
-				90C21F461C3D58D900057999 /* UIAlertController+DMHelpers.m */,
 			);
 			path = Categories;
 			sourceTree = "<group>";
@@ -444,7 +439,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				90C21F2B1C3D588600057999 /* DMSavedLoopCell.m in Sources */,
-				90C21F471C3D58D900057999 /* UIAlertController+DMHelpers.m in Sources */,
 				90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */,
 				90C21F191C3D57BD00057999 /* DMPersistenceService.m in Sources */,
 				90C21F2C1C3D588600057999 /* DMSavedLoopHeader.m in Sources */,
