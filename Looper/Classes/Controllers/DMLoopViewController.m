@@ -62,20 +62,26 @@
 
 -(IBAction)cancelTapped
 {
-    __weak typeof (self)weakSelf = self;
-    [self dm_presentAlertWithTitle:@"Cancelling"
-                           message:@"All changes will be lost.\nAre you sure you want to continue?"
-                       cancelTitle:@"No"
-                        otherTitle:@"Yes"
-                        otherBlock:^{
-                            [weakSelf dismissViewControllerAnimated:YES completion:nil];
-                        }
-                        otherStyle:UIAlertActionStyleDestructive];
+    if ([self.tracksViewController hasChanges]) {
+        __weak typeof (self)weakSelf = self;
+        [self dm_presentAlertWithTitle:@"Cancelling"
+                               message:@"All changes will be lost.\nAre you sure you want to continue?"
+                           cancelTitle:@"No"
+                            otherTitle:@"Yes"
+                            otherBlock:^{
+                                [weakSelf dismissViewControllerAnimated:YES completion:nil];
+                            }
+                            otherStyle:UIAlertActionStyleDestructive];
+    }
+    else {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 -(IBAction)saveTapped
 {
-    if ([[DMPersistenceService sharedInstance] loopWithTitle:self.titleLabel.text]) {
+    if ([[DMPersistenceService sharedInstance] loopWithTitle:self.titleLabel.text] &&
+        [self.tracksViewController hasChanges]) {
         __weak typeof (self)weakSelf = self;
         [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
                                message:@"Are you sure you want to continue?"

@@ -52,6 +52,18 @@
     DMSavedLoopCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMSavedLoopCellKey forIndexPath:indexPath];
     DMLoop *loop = self.savedLoops[indexPath.item];
     cell.label.text = loop.title;
+    
+    __weak typeof (self)weakSelf = self;
+    [cell setDeleteBlock:^{
+        [[DMPersistenceService sharedInstance] deleteLoop:loop];
+        weakSelf.savedLoops = [[DMPersistenceService sharedInstance] loops];
+        
+        [weakSelf.collectionView performBatchUpdates:^{
+            [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+        } completion:^(BOOL finished) {
+            [weakSelf.collectionView reloadItemsAtIndexPaths:[weakSelf.collectionView indexPathsForVisibleItems]];
+        }];
+    }];
     return cell;
 }
 

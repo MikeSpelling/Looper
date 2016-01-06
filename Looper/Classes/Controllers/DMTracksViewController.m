@@ -8,7 +8,6 @@
 
 #import "DMTracksViewController.h"
 #import "DMLooper.h"
-#import "DMPersistenceService.h"
 
 @interface DMTracksViewController ()
 @property (nonatomic, strong) DMLooper *looper;
@@ -54,8 +53,12 @@
 
 -(void)saveLoopNamed:(NSString*)title
 {
-    DMLoop *loop = [[DMLoop alloc] initWithTitle:title channels:[self.looper channels]];
-    [[DMPersistenceService sharedInstance] saveLoop:loop];
+    [self.looper saveLoopWithName:title];
+}
+
+-(BOOL)hasChanges
+{
+    return self.looper.hasChanges;
 }
 
 

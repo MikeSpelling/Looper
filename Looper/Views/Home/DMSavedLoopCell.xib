@@ -18,18 +18,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="270" height="132"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VJG-9z-7qJ">
-                                <rect key="frame" x="8" y="8" width="254" height="116"/>
+                                <rect key="frame" x="62" y="8" width="200" height="116"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YaE-Tk-Pxv">
+                                <rect key="frame" x="8" y="8" width="46" height="116"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="46" id="5Zz-lx-dvg"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                                <state key="normal" title="Delete">
+                                    <color key="titleColor" red="1" green="0.046319447734534669" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteTapped" destination="mY2-dB-bBf" eventType="touchUpInside" id="MQ5-ts-Cuh"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.10588235294117647" green="0.10588235294117647" blue="0.10588235294117647" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="VJG-9z-7qJ" firstAttribute="leading" secondItem="PV8-oi-1PM" secondAttribute="leading" constant="8" id="Fp6-iR-kk8"/>
+                            <constraint firstItem="YaE-Tk-Pxv" firstAttribute="leading" secondItem="PV8-oi-1PM" secondAttribute="leading" constant="8" id="R6i-hC-yT8"/>
+                            <constraint firstAttribute="bottom" secondItem="YaE-Tk-Pxv" secondAttribute="bottom" constant="8" id="UVX-3r-9WU"/>
                             <constraint firstAttribute="trailing" secondItem="VJG-9z-7qJ" secondAttribute="trailing" constant="8" id="Zgf-C7-fPX"/>
+                            <constraint firstItem="VJG-9z-7qJ" firstAttribute="leading" secondItem="YaE-Tk-Pxv" secondAttribute="trailing" constant="8" id="aSI-S7-ZZe"/>
                             <constraint firstItem="VJG-9z-7qJ" firstAttribute="top" secondItem="PV8-oi-1PM" secondAttribute="top" constant="8" id="biw-XA-1zR"/>
                             <constraint firstAttribute="bottom" secondItem="VJG-9z-7qJ" secondAttribute="bottom" constant="8" id="d9u-fV-RcX"/>
+                            <constraint firstItem="YaE-Tk-Pxv" firstAttribute="top" secondItem="PV8-oi-1PM" secondAttribute="top" constant="8" id="nmR-vW-Zvq"/>
                         </constraints>
                     </view>
                 </subviews>

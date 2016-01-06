@@ -6,12 +6,14 @@
 //  Copyright © 2016 DM. All rights reserved.
 //
 
+#import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
 #import "DMChannel.h"
 #import "DMLoop.h"
-#import <AVFoundation/AVFoundation.h>
+#import "DMPersistenceService.h"
 
 @interface DMLooper() <DMChannelDelegate>
+@property (nonatomic, strong) NSArray *originalChannels;
 @property (nonatomic, strong) NSMutableArray *channels;
 @property (nonatomic, strong) DMChannel *recordingChannel;
 @property (nonatomic, strong) NSTimer *timer;
@@ -24,15 +26,17 @@
 {
     if (self = [super init]) {
         _channels = loop.channels ? loop.channels : [NSMutableArray new];
+        _originalChannels = [_channels copy];
         
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     return self;
 }
 
--(NSMutableArray*)channels
+-(void)saveLoopWithName:(NSString*)title
 {
-    return _channels;
+    DMLoop *loop = [[DMLoop alloc] initWithTitle:title channels:self.channels];
+    [[DMPersistenceService sharedInstance] saveLoop:loop];
 }
 
 -(void)recordNewLoop
@@ -90,6 +94,11 @@
 -(BOOL)isRecording
 {
     return self.recordingChannel != nil;
+}
+
+-(BOOL)hasChanges
+{
+    return ![self.originalChannels isEqualToArray:self.channels];
 }
 
 

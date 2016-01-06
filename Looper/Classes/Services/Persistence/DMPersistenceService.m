@@ -53,6 +53,21 @@ NSString *const DMPersistenceServiceLoopsKey = @"DMPersistenceServiceLoopsKey";
     }
 }
 
+-(void)deleteLoop:(DMLoop*)loop
+{
+    if (loop.title) {
+        NSMutableArray *loops = [[self loops] mutableCopy];
+        for (DMLoop *savedLoop in loops) {
+            if ([savedLoop.title isEqualToString:loop.title]) {
+                [loops removeObject:savedLoop];
+                [self.userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:loops] forKey:DMPersistenceServiceLoopsKey];
+                [self.userDefaults synchronize];
+                return;
+            }
+        }
+    }
+}
+
 -(NSArray*)loops
 {
     NSArray *loops = [NSArray new];

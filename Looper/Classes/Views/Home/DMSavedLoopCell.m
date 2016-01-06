@@ -12,4 +12,11 @@ NSString *const DMSavedLoopCellKey = @"DMSavedLoopCell";
 
 @implementation DMSavedLoopCell
 
+-(IBAction)deleteTapped
+{
+    if (self.deleteBlock) {
+        self.deleteBlock();
+    }
+}
+
 @end

@@ -19,7 +19,8 @@
 -(void)pausePlayback;
 -(void)play;
 -(BOOL)isRecording;
+-(BOOL)hasChanges;
 
--(NSMutableArray*)channels;
+-(void)saveLoopWithName:(NSString*)title;
 
 @end

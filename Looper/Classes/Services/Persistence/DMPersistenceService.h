@@ -14,6 +14,7 @@
 +(DMPersistenceService*)sharedInstance;
 
 -(void)saveLoop:(DMLoop*)loop;
+-(void)deleteLoop:(DMLoop*)loop;
 -(NSArray*)loops;
 -(DMLoop*)loopWithTitle:(NSString*)title;
 

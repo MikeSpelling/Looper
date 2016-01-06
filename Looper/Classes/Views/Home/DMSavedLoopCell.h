@@ -12,6 +12,8 @@ extern NSString *const DMSavedLoopCellKey;
 
 @interface DMSavedLoopCell : UICollectionViewCell
 
+@property (nonatomic, copy) void(^deleteBlock)();
+
 @property (nonatomic, weak) IBOutlet UILabel *label;
 
 @end

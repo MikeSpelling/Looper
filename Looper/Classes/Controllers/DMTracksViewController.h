@@ -14,5 +14,6 @@
 -(instancetype)initWithLoop:(DMLoop*)loop;
 
 -(void)saveLoopNamed:(NSString*)title;
+-(BOOL)hasChanges;
 
 @end
