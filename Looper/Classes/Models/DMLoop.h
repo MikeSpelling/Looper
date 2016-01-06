@@ -11,6 +11,8 @@
 @interface DMLoop : NSObject <NSCoding>
 
 -(instancetype)initWithTitle:(NSString*)title channels:(NSArray*)channels;
+-(BOOL)isEqualToLoop:(id)loop;
+-(void)deleteFiles;
 
 @property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSMutableArray *channels;

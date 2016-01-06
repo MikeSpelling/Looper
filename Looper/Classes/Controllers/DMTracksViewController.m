@@ -11,6 +11,7 @@
 
 @interface DMTracksViewController ()
 @property (nonatomic, strong) DMLooper *looper;
+@property (nonatomic, strong) DMLoop *loop;
 
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
 @property (nonatomic, weak) IBOutlet UIButton *pauseButton;
@@ -26,7 +27,8 @@
 -(instancetype)initWithLoop:(DMLoop*)loop
 {
     if (self = [super initWithNibName:@"DMTracksView" bundle:nil]) {
-        self.looper = [[DMLooper alloc] initWithLoop:loop];
+        _loop = loop;
+        _looper = [[DMLooper alloc] initWithLoop:loop];
     }
     return self;
 }
@@ -35,7 +37,7 @@
 {
     [super viewDidLoad];
     
-    self.playButton.alpha = 0;
+    self.playButton.alpha = self.loop.channels.count>0 ? 1 : 0;
     self.pauseButton.alpha = 0;
     self.stopButton.alpha = 0;
     self.startRecordingButton.alpha = 1;

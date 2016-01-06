@@ -32,7 +32,7 @@ NSString *const DMChannelNumberOfChannelsCodingKey = @"DMChannelNumberOfChannels
         _offset = offset;
         
         NSString *baseFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
-        NSArray *pathComponents = @[baseFilePath, [NSString stringWithFormat:@"%lu.m4a", (unsigned long)index]];
+        NSArray *pathComponents = @[baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
         _url = [NSURL fileURLWithPathComponents:pathComponents];
         
         // Setup defaults
@@ -83,6 +83,11 @@ NSString *const DMChannelNumberOfChannelsCodingKey = @"DMChannelNumberOfChannels
 -(void)pausePlayback
 {
     [self.player pause];
+}
+
+-(void)deleteFile
+{
+    [[NSFileManager defaultManager] removeItemAtURL:self.url error:nil];
 }
 
 

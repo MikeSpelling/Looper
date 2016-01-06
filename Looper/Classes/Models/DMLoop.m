@@ -7,6 +7,7 @@
 //
 
 #import "DMLoop.h"
+#import "DMChannel.h"
 
 NSString *const DMLoopTitleCodingKey = @"DMLoopTitleCodingKey";
 NSString *const DMLoopChannelsCodingKey = @"DMLoopChannelsCodingKey";
@@ -20,6 +21,24 @@ NSString *const DMLoopChannelsCodingKey = @"DMLoopChannelsCodingKey";
         _channels = channels;
     }
     return self;
+}
+
+-(void)deleteFiles
+{
+    for (DMChannel *channel in self.channels) {
+        [channel deleteFile];
+    }
+}
+
+-(BOOL)isEqualToLoop:(id)loop
+{
+    if ([loop isKindOfClass:[DMLoop class]]) {
+        DMLoop *castLoop = loop;
+        BOOL titlesEqual = [castLoop.title isEqualToString:self.title];
+        BOOL channelsEqual = [castLoop.channels isEqualToArray:self.channels];
+        return titlesEqual && channelsEqual;
+    }
+    return NO;
 }
 
 

@@ -59,6 +59,7 @@ NSString *const DMPersistenceServiceLoopsKey = @"DMPersistenceServiceLoopsKey";
         NSMutableArray *loops = [[self loops] mutableCopy];
         for (DMLoop *savedLoop in loops) {
             if ([savedLoop.title isEqualToString:loop.title]) {
+                [loop deleteFiles];
                 [loops removeObject:savedLoop];
                 [self.userDefaults setObject:[NSKeyedArchiver archivedDataWithRootObject:loops] forKey:DMPersistenceServiceLoopsKey];
                 [self.userDefaults synchronize];

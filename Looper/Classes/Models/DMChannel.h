@@ -22,7 +22,9 @@
 
 @interface DMChannel : NSObject <NSCoding>
 
--(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate index:(NSUInteger)index offset:(CGFloat)offset;
+-(instancetype)initWithDelegate:(id<DMChannelDelegate>)delegate
+                          index:(NSUInteger)index
+                         offset:(CGFloat)offset;
 
 -(void)record;
 -(void)stopRecording;
@@ -30,6 +32,7 @@
 -(void)playIfNeededAtOffset:(CGFloat)offset looped:(BOOL)looped;
 -(void)stopPlayback;
 -(void)pausePlayback;
+-(void)deleteFile;
 
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign, readonly) NSUInteger index;
