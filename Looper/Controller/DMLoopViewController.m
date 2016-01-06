@@ -37,7 +37,7 @@
 {
     [super viewDidLoad];
     
-    [self dm_addChildViewController:[DMTracksViewController new] toView:self.containerView];
+    [self dm_addExpandingChildViewController:[DMTracksViewController new] toView:self.containerView];
     
     self.titleTextField.text = self.titleLabel.text;
     self.titleTextField.alpha = 0;
