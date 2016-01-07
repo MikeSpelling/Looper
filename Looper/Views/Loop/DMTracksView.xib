@@ -8,6 +8,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DMTracksViewController">
             <connections>
+                <outlet property="collectionView" destination="DGP-cG-pOf" id="YrY-av-9G9"/>
                 <outlet property="finishRecordingButton" destination="FPY-Wy-gds" id="7Z1-C1-vEw"/>
                 <outlet property="nextRecordingButton" destination="Jw2-4b-FMK" id="mZj-ni-eAJ"/>
                 <outlet property="pauseButton" destination="PPa-xd-aXY" id="nFf-MU-LWW"/>
@@ -86,16 +87,6 @@
                         <constraint firstItem="YVJ-hy-c1R" firstAttribute="leading" secondItem="PPa-xd-aXY" secondAttribute="leading" id="uEC-x2-axn"/>
                     </constraints>
                 </view>
-                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" indicatorStyle="white" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="DGP-cG-pOf">
-                    <rect key="frame" x="0.0" y="64" width="600" height="408"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="PIF-2p-khp">
-                        <size key="itemSize" width="50" height="50"/>
-                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                    </collectionViewFlowLayout>
-                </collectionView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xL6-jH-rmB" userLabel="LoopButtonsView">
                     <rect key="frame" x="0.0" y="472" width="600" height="128"/>
                     <subviews>
@@ -147,6 +138,20 @@
                         <constraint firstItem="FPY-Wy-gds" firstAttribute="width" secondItem="xL6-jH-rmB" secondAttribute="width" multiplier="0.5" id="tRH-X9-8oc"/>
                     </constraints>
                 </view>
+                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" indicatorStyle="white" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="DGP-cG-pOf">
+                    <rect key="frame" x="0.0" y="64" width="600" height="408"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="PIF-2p-khp">
+                        <size key="itemSize" width="50" height="50"/>
+                        <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                        <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                        <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                    </collectionViewFlowLayout>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="ksx-Hn-T5V"/>
+                        <outlet property="delegate" destination="-1" id="b06-Dl-leq"/>
+                    </connections>
+                </collectionView>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <constraints>

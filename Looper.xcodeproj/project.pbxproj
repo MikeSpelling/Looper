@@ -14,6 +14,8 @@
 		900F10BA1C3B2351003FF3B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 900F10B91C3B2351003FF3B1 /* Assets.xcassets */; };
 		900F10C81C3B2351003FF3B1 /* LooperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10C71C3B2351003FF3B1 /* LooperTests.m */; };
 		900F10D31C3B2351003FF3B1 /* LooperUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10D21C3B2351003FF3B1 /* LooperUITests.m */; };
+		903D5C2B1C3EF2BE0097A06D /* DMTrackCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 903D5C2A1C3EF2BE0097A06D /* DMTrackCell.xib */; };
+		903D5C2F1C3EF2F40097A06D /* DMTrackCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 903D5C2E1C3EF2F40097A06D /* DMTrackCell.m */; };
 		9048DDC81C3DB090005D3C08 /* DMBaseTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */; };
 		9048DDCC1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */; };
 		9062E6F91C3EADE0001B4018 /* DMFileRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 9062E6F81C3EADE0001B4018 /* DMFileRepository.m */; };
@@ -70,6 +72,9 @@
 		900F10CE1C3B2351003FF3B1 /* LooperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LooperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		900F10D21C3B2351003FF3B1 /* LooperUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LooperUITests.m; sourceTree = "<group>"; };
 		900F10D41C3B2351003FF3B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		903D5C2A1C3EF2BE0097A06D /* DMTrackCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMTrackCell.xib; sourceTree = "<group>"; };
+		903D5C2D1C3EF2F40097A06D /* DMTrackCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTrackCell.h; sourceTree = "<group>"; };
+		903D5C2E1C3EF2F40097A06D /* DMTrackCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTrackCell.m; sourceTree = "<group>"; };
 		9048DDC61C3DB090005D3C08 /* DMBaseTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMBaseTrack.h; sourceTree = "<group>"; };
 		9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMBaseTrack.m; sourceTree = "<group>"; };
 		9048DDCA1C3DC9D5005D3C08 /* DMUserDefaultsRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMUserDefaultsRepository.h; sourceTree = "<group>"; };
@@ -209,6 +214,15 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		903D5C2C1C3EF2DF0097A06D /* Loop */ = {
+			isa = PBXGroup;
+			children = (
+				903D5C2D1C3EF2F40097A06D /* DMTrackCell.h */,
+				903D5C2E1C3EF2F40097A06D /* DMTrackCell.m */,
+			);
+			path = Loop;
+			sourceTree = "<group>";
+		};
 		9048DDC91C3DC9B9005D3C08 /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,6 +303,7 @@
 		90C21F0D1C3D57BD00057999 /* Loop */ = {
 			isa = PBXGroup;
 			children = (
+				903D5C2A1C3EF2BE0097A06D /* DMTrackCell.xib */,
 				90C21F0E1C3D57BD00057999 /* DMTracksView.xib */,
 			);
 			path = Loop;
@@ -298,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				90C21F261C3D588600057999 /* Home */,
+				903D5C2C1C3EF2DF0097A06D /* Loop */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -450,6 +466,7 @@
 				90C21F241C3D581B00057999 /* Main.storyboard in Resources */,
 				90C21F231C3D581B00057999 /* LaunchScreen.storyboard in Resources */,
 				90C21F1D1C3D57BD00057999 /* DMSavedLoopHeader.xib in Resources */,
+				903D5C2B1C3EF2BE0097A06D /* DMTrackCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -476,6 +493,7 @@
 			files = (
 				90C21F2B1C3D588600057999 /* DMSavedLoopCell.m in Sources */,
 				90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */,
+				903D5C2F1C3EF2F40097A06D /* DMTrackCell.m in Sources */,
 				90C21F191C3D57BD00057999 /* DMLooperService.m in Sources */,
 				90C21F2C1C3D588600057999 /* DMSavedLoopHeader.m in Sources */,
 				90001EA01C3EC9FD0099615B /* DMEnvironment.m in Sources */,

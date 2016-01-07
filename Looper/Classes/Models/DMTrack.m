@@ -92,7 +92,7 @@ NSUInteger const DMTrackBitDepth = 16;
     if (!_player) {
         _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
         _player.numberOfLoops = 0;
-        _player.volume = 0.8;
+        _player.volume = 1;
         [_player prepareToPlay];
     }
     return _player;

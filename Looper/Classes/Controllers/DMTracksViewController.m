@@ -9,11 +9,13 @@
 #import "DMTracksViewController.h"
 #import "DMLooperService.h"
 #import "UIViewController+DMHelpers.h"
+#import "DMTrackCell.h"
 
-@interface DMTracksViewController ()
+@interface DMTracksViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
 
+@property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
 @property (nonatomic, weak) IBOutlet UIButton *pauseButton;
 @property (nonatomic, weak) IBOutlet UIButton *stopButton;
@@ -37,6 +39,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    [self registerCells];
     
     self.playButton.alpha = self.looper ? 1 : 0;
     self.pauseButton.alpha = 0;
@@ -121,6 +125,7 @@
 -(IBAction)finishRecordingTapped
 {
     [self.looper stopRecording];
+    [self.collectionView reloadData];
     
     self.playButton.alpha = 0;
     self.pauseButton.alpha = 1;
@@ -143,6 +148,7 @@
 -(IBAction)nextRecordingTapped
 {
     [self.looper stopRecording];
+    [self.collectionView reloadData];
     [self.looper startRecording];
     
     self.playButton.alpha = 1;
@@ -152,6 +158,67 @@
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;
     self.nextRecordingButton.alpha = 1;
+}
+
+
+#pragma mark - UICollectionViewDataSource
+
+-(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return [self.looper tracks].count;
+}
+
+-(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    DMTrackCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMTrackCellKey forIndexPath:indexPath];
+    return cell;
+}
+
+-(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout  *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self cellSize];
+}
+
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section
+{
+    return [self cellSize];
+}
+
+-(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 8;
+}
+
+-(CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section
+{
+    return 8;
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section
+{
+    return UIEdgeInsetsZero;
+}
+
+
+#pragma mark - UICollectionViewDelegate
+
+-(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"Tapped %lu", indexPath.item);
+}
+
+
+#pragma mark - Internal
+
+-(void)registerCells
+{
+    UINib *cellNib = [UINib nibWithNibName:DMTrackCellKey bundle:nil];
+    [self.collectionView registerNib:cellNib forCellWithReuseIdentifier:DMTrackCellKey];
+}
+
+-(CGSize)cellSize
+{
+    return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height/6.0);
 }
 
 @end
