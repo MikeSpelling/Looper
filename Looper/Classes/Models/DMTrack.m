@@ -10,6 +10,7 @@
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
+NSString *const DMTrackIsSavedCodingKey = @"DMTrackIsSavedCodingKey";
 
 CGFloat const DMTrackSampleRate = 44100;
 NSUInteger const DMTrackNumberOfChannels = 2;
@@ -29,6 +30,13 @@ NSUInteger const DMTrackBitDepth = 16;
         _offset = offset;
     }
     return self;
+}
+
+-(void)dealloc
+{
+    if (!self.isSaved) {
+        [self deleteTrack];
+    }
 }
 
 -(void)startRecording
@@ -67,6 +75,7 @@ NSUInteger const DMTrackBitDepth = 16;
     _recorder = nil;
     _offset = 0;
     _hasPlayedInLoop = NO;
+    _isSaved = NO;
 }
 
 
@@ -140,6 +149,7 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeFloat:self.offset forKey:DMTrackOffsetCodingKey];
+    [encoder encodeBool:self.isSaved forKey:DMTrackIsSavedCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -147,8 +157,36 @@ NSUInteger const DMTrackBitDepth = 16;
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeFloatForKey:DMTrackOffsetCodingKey];
+        _isSaved = [decoder decodeBoolForKey:DMTrackIsSavedCodingKey];
     }
     return self;
+}
+
+
+#pragma mark - Equality
+
+-(BOOL)isEqualToTrack:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[DMTrack class]]) {
+        return NO;
+    }
+    
+    DMTrack *track = object;
+    
+    if (track.offset != self.offset) {
+        return NO;
+    }
+    
+    BOOL urlsSame = (!track.url && !self.url) || [track.url.absoluteString isEqualToString:self.url.absoluteString];
+    if (!urlsSame) {
+        return NO;
+    }
+    
+    return YES;
 }
 
 @end

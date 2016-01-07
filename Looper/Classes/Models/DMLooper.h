@@ -19,6 +19,11 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
+-(void)saveLooperWithTitle:(NSString*)title;
 -(void)deleteLooper;
+
+-(BOOL)hasBaseTrack;
+
+-(BOOL)isEqualToLooper:(id)object;
 
 @end

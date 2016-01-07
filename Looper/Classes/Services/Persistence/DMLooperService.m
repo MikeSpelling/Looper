@@ -56,7 +56,6 @@
     NSMutableArray *loopers = [[self loopers] mutableCopy];
     for (DMLooper *savedLooper in loopers) {
         if ([savedLooper.title isEqualToString:looper.title]) {
-            [looper deleteLooper];
             [loopers removeObject:savedLooper];
             [self.userDefaultsRepository saveLoopers:loopers];
             return;

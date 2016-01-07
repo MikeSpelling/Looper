@@ -7,6 +7,7 @@
 //
 
 #import <AVFoundation/AVFoundation.h>
+#import "DMLooperService.h"
 #import "DMLooper.h"
 #import "DMBaseTrack.h"
 #import "DMTrack.h"
@@ -16,6 +17,8 @@ NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
 NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 @interface DMLooper() <DMBaseTrackDelegate>
+@property (nonatomic, strong) DMLooperService *looperService;
+
 @property (nonatomic, strong) DMBaseTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
@@ -39,6 +42,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)commonInit
 {
+    _looperService = [DMLooperService sharedInstance];
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
@@ -99,6 +103,8 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)deleteLooper
 {
+    [self.looperService deleteLooper:self];
+    
     [self.baseTrack deleteTrack];
     for (DMTrack *track in self.extraTracks) {
         [track deleteTrack];
@@ -106,6 +112,23 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     _title = nil;
     _baseTrack = nil;
     _extraTracks = nil;
+}
+
+-(void)saveLooperWithTitle:(NSString*)title
+{
+    self.title = title;
+    
+    self.baseTrack.isSaved = YES;
+    for (DMTrack *track in self.extraTracks) {
+        track.isSaved = YES;
+    }
+    
+    [self.looperService saveLooper:self];
+}
+
+-(BOOL)hasBaseTrack
+{
+    return self.baseTrack != nil;
 }
 
 
@@ -150,6 +173,46 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
         [self commonInit];
     }
     return self;
+}
+
+
+#pragma mark - Equality
+
+-(BOOL)isEqualToLooper:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[DMLooper class]]) {
+        return NO;
+    }
+    
+    DMLooper *looper = object;
+    BOOL titlesSame = (!looper.title && !self.title) || [looper.title isEqualToString:self.title];
+    if (!titlesSame) {
+        return NO;
+    }
+    
+    BOOL baseTrackSame = (!looper.baseTrack && !self.baseTrack) || [looper.baseTrack isEqualToTrack:self.baseTrack];
+    if (!baseTrackSame) {
+        return NO;
+    }
+    
+    BOOL extraTracksEqualSize = (!looper.extraTracks && !self.extraTracks) || looper.extraTracks.count == self.extraTracks.count;
+    if (!extraTracksEqualSize) {
+        return NO;
+    }
+    
+    for (NSUInteger i=0; i<looper.extraTracks.count; i++) {
+        DMTrack *otherTrack = looper.extraTracks[i];
+        DMTrack *track = self.extraTracks[i];
+        if (![track isEqualToTrack:otherTrack]) {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 @end

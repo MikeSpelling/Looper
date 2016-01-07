@@ -13,8 +13,7 @@
 
 -(instancetype)initWithLooper:(DMLooper*)looper;
 
--(void)saveLooperNamed:(NSString*)title;
-
-@property (nonatomic, assign, readonly) BOOL hasChanges;
+-(void)saveLooperWithTitle:(NSString*)title;
+-(BOOL)hasUnsavedChanges;
 
 @end

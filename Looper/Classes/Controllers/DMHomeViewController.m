@@ -55,7 +55,7 @@
     
     __weak typeof (self)weakSelf = self;
     [cell setDeleteBlock:^{
-        [[DMLooperService sharedInstance] deleteLooper:looper];
+        [looper deleteLooper];
         weakSelf.savedLoopers = [[DMLooperService sharedInstance] loopers];
         
         [weakSelf.collectionView performBatchUpdates:^{

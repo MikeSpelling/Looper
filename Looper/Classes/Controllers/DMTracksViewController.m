@@ -8,8 +8,10 @@
 
 #import "DMTracksViewController.h"
 #import "DMLooperService.h"
+#import "UIViewController+DMHelpers.h"
 
 @interface DMTracksViewController ()
+@property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
 
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
@@ -26,6 +28,7 @@
 -(instancetype)initWithLooper:(DMLooper*)looper
 {
     if (self = [super initWithNibName:@"DMTracksView" bundle:nil]) {
+        _looperService = [DMLooperService sharedInstance];
         _looper = looper;
     }
     return self;
@@ -51,10 +54,32 @@
 
 #pragma mark - DMTracksViewController
 
--(void)saveLooperNamed:(NSString*)title
+-(void)saveLooperWithTitle:(NSString*)title
 {
-    self.looper.title = title;
-    [[DMLooperService sharedInstance] saveLooper:self.looper];
+    DMLooper *savedLooper = [self.looperService looperWithTitle:title];
+    if (savedLooper && ![savedLooper isEqualToLooper:self.looper]) {
+        __weak typeof (self)weakSelf = self;
+        [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", title]
+                               message:@"Are you sure you want to continue?"
+                           cancelTitle:@"No"
+                            otherTitle:@"Yes"
+                            otherBlock:^{
+                                [weakSelf.looper saveLooperWithTitle:title];
+                            }
+                            otherStyle:UIAlertActionStyleDefault];
+    }
+    else {
+        [self.looper saveLooperWithTitle:title];
+    }
+}
+
+-(BOOL)hasUnsavedChanges
+{
+    DMLooper *savedLooper = [self.looperService looperWithTitle:self.looper.title];
+    if (savedLooper) {
+        return ![savedLooper isEqualToLooper:self.looper];
+    }
+    return [self.looper hasBaseTrack];
 }
 
 
@@ -107,8 +132,6 @@
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;
     self.nextRecordingButton.alpha = 1;
-    
-    _hasChanges = YES;
 }
 
 -(IBAction)nextRecordingTapped

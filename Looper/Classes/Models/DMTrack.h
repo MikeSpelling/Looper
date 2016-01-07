@@ -27,6 +27,9 @@
 
 @property (nonatomic, assign) CGFloat offset;
 @property (nonatomic, assign) BOOL hasPlayedInLoop;
+@property (nonatomic, assign) BOOL isSaved;
 @property (nonatomic, strong) AVAudioPlayer *player;
+
+-(BOOL)isEqualToTrack:(id)object;
 
 @end

@@ -12,6 +12,7 @@
 #import "DMLooperService.h"
 
 @interface DMLooperViewController() <UITextFieldDelegate>
+@property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
 
 @property (nonatomic, strong) DMTracksViewController *tracksViewController;
@@ -28,6 +29,7 @@
 -(instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
+        _looperService = [DMLooperService sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
     }
     return self;
@@ -60,9 +62,9 @@
 
 #pragma mark - Actions
 
--(IBAction)cancelTapped
+-(IBAction)closeTapped
 {
-    if ([self.tracksViewController hasChanges]) {
+    if ([self.tracksViewController hasUnsavedChanges]) {
         __weak typeof (self)weakSelf = self;
         [self dm_presentAlertWithTitle:@"Cancelling"
                                message:@"All changes will be lost.\nAre you sure you want to continue?"
@@ -80,21 +82,7 @@
 
 -(IBAction)saveTapped
 {
-    if ([[DMLooperService sharedInstance] looperWithTitle:self.titleLabel.text] &&
-        [self.tracksViewController hasChanges]) {
-        __weak typeof (self)weakSelf = self;
-        [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
-                               message:@"Are you sure you want to continue?"
-                           cancelTitle:@"No"
-                            otherTitle:@"Yes"
-                            otherBlock:^{
-                                [weakSelf saveAndDismiss];
-                            }
-                            otherStyle:UIAlertActionStyleDefault];
-    }
-    else {
-        [self saveAndDismiss];
-    }
+    [self.tracksViewController saveLooperWithTitle:self.titleLabel.text];
 }
 
 -(IBAction)titleTapped
@@ -133,15 +121,6 @@
 {
     [textField resignFirstResponder];
     return NO;
-}
-
-
-#pragma mark - Internal
-
--(void)saveAndDismiss
-{
-    [self.tracksViewController saveLooperNamed:self.titleLabel.text];
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
