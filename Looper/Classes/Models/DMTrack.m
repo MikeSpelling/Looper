@@ -11,7 +11,6 @@
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
-NSString *const DMTrackShouldPersistAudioFileCodingKey = @"DMTrackShouldPersistAudioFileCodingKey";
 
 CGFloat const DMTrackSampleRate = 44100;
 NSUInteger const DMTrackNumberOfChannels = 2;
@@ -58,6 +57,11 @@ NSUInteger const DMTrackBitDepth = 16;
 -(void)pausePlayback
 {
     [self.player pause];
+}
+
+-(NSString*)filename
+{
+    return [_url lastPathComponent];
 }
 
 
@@ -131,7 +135,6 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeFloat:self.offset forKey:DMTrackOffsetCodingKey];
-    [encoder encodeBool:self.shouldPersistAudioFile forKey:DMTrackShouldPersistAudioFileCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -139,7 +142,6 @@ NSUInteger const DMTrackBitDepth = 16;
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeFloatForKey:DMTrackOffsetCodingKey];
-        _shouldPersistAudioFile = [decoder decodeBoolForKey:DMTrackShouldPersistAudioFileCodingKey];
     }
     return self;
 }

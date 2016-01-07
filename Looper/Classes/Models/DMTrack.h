@@ -23,11 +23,10 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
--(NSURL*)url;
+-(NSString*)filename;
 
 @property (nonatomic, assign) CGFloat offset;
 @property (nonatomic, assign) BOOL hasPlayedInLoop;
-@property (nonatomic, assign) BOOL shouldPersistAudioFile;
 @property (nonatomic, strong) AVAudioPlayer *player;
 
 -(BOOL)isEqualToTrack:(id)object;

@@ -45,7 +45,7 @@
     NSMutableArray *filesToKeep = [NSMutableArray new];
     for (DMLooper *looper in [[DMLooperService sharedInstance] loopers]) {
         for (DMTrack *track in [looper tracks]) {
-            [filesToKeep addObject:[track.url lastPathComponent]];
+            [filesToKeep addObject:track.filename];
         }
     }
     

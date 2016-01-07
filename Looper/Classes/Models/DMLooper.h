@@ -19,7 +19,6 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
--(void)saveLooper;
 -(NSArray*)tracks;
 
 -(BOOL)isEqualToLooper:(id)object;

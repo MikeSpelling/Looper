@@ -38,9 +38,7 @@
 
 -(void)saveLooper:(DMLooper*)looper
 {
-    if (looper.title) {
-        [looper saveLooper];
-        
+    if (looper.title) {        
         NSMutableArray *loopers = [[self loopers] mutableCopy];
         
         for (DMLooper *savedLooper in loopers) {

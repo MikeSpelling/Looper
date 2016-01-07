@@ -97,16 +97,16 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
--(void)saveLooper
-{
-    for (DMTrack *track in [self tracks]) {
-        track.shouldPersistAudioFile = YES;
-    }
-}
-
 -(NSArray*)tracks
 {
-    return [@[self.baseTrack] arrayByAddingObjectsFromArray:self.extraTracks];
+    NSArray *allTracks = [NSArray new];
+    if (self.baseTrack) {
+        allTracks = @[self.baseTrack];
+        if (self.extraTracks) {
+            allTracks = [allTracks arrayByAddingObjectsFromArray:self.extraTracks];
+        }
+    }
+    return allTracks;
 }
 
 
