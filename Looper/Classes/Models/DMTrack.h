@@ -23,11 +23,11 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
--(void)deleteTrack;
+-(void)deleteAudioFile;
 
 @property (nonatomic, assign) CGFloat offset;
 @property (nonatomic, assign) BOOL hasPlayedInLoop;
-@property (nonatomic, assign) BOOL isSaved;
+@property (nonatomic, assign) BOOL shouldPersistAudioFile;
 @property (nonatomic, strong) AVAudioPlayer *player;
 
 -(BOOL)isEqualToTrack:(id)object;

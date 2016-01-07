@@ -38,14 +38,17 @@
 -(void)saveLooper:(DMLooper*)looper
 {
     if (looper.title) {
+        [looper saveLooper];
+        
         NSMutableArray *loopers = [[self loopers] mutableCopy];
         for (DMLooper *savedLooper in loopers) {
             if ([savedLooper.title isEqualToString:looper.title]) {
+                [savedLooper deleteAudioFiles];
                 [loopers removeObject:savedLooper];
                 break;
             }
         }
-        [loopers addObject:looper];
+        [loopers insertObject:looper atIndex:0];
         
         [self.userDefaultsRepository saveLoopers:loopers];
     }
@@ -56,7 +59,9 @@
     NSMutableArray *loopers = [[self loopers] mutableCopy];
     for (DMLooper *savedLooper in loopers) {
         if ([savedLooper.title isEqualToString:looper.title]) {
+            [savedLooper deleteAudioFiles];
             [loopers removeObject:savedLooper];
+            
             [self.userDefaultsRepository saveLoopers:loopers];
             return;
         }

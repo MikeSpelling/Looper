@@ -9,10 +9,8 @@
 #import "DMLooperViewController.h"
 #import "DMTracksViewController.h"
 #import "UIViewController+DMHelpers.h"
-#import "DMLooperService.h"
 
 @interface DMLooperViewController() <UITextFieldDelegate>
-@property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
 
 @property (nonatomic, strong) DMTracksViewController *tracksViewController;
@@ -29,7 +27,6 @@
 -(instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
-        _looperService = [DMLooperService sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
     }
     return self;
@@ -69,6 +66,7 @@
         [self dm_presentAlertWithTitle:@"Cancelling"
                                message:@"All changes will be lost.\nAre you sure you want to continue?"
                            cancelTitle:@"No"
+                           cancelBlock:nil
                             otherTitle:@"Yes"
                             otherBlock:^{
                                 [weakSelf dismissViewControllerAnimated:YES completion:nil];

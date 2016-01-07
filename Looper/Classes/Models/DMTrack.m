@@ -10,7 +10,7 @@
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
-NSString *const DMTrackIsSavedCodingKey = @"DMTrackIsSavedCodingKey";
+NSString *const DMTrackShouldPersistAudioFileCodingKey = @"DMTrackShouldPersistAudioFileCodingKey";
 
 CGFloat const DMTrackSampleRate = 44100;
 NSUInteger const DMTrackNumberOfChannels = 2;
@@ -34,8 +34,8 @@ NSUInteger const DMTrackBitDepth = 16;
 
 -(void)dealloc
 {
-    if (!self.isSaved) {
-        [self deleteTrack];
+    if (!self.shouldPersistAudioFile) {
+        [self deleteAudioFile];
     }
 }
 
@@ -67,15 +67,14 @@ NSUInteger const DMTrackBitDepth = 16;
     [self.player pause];
 }
 
--(void)deleteTrack
+-(void)deleteAudioFile
 {
     [[NSFileManager defaultManager] removeItemAtURL:self.url error:nil];
-    _url = nil;
-    _player = nil;
-    _recorder = nil;
-    _offset = 0;
-    _hasPlayedInLoop = NO;
-    _isSaved = NO;
+    self.url = nil;
+    self.player = nil;
+    self.recorder = nil;
+    self.offset = 0;
+    self.hasPlayedInLoop = NO;
 }
 
 
@@ -149,7 +148,7 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeFloat:self.offset forKey:DMTrackOffsetCodingKey];
-    [encoder encodeBool:self.isSaved forKey:DMTrackIsSavedCodingKey];
+    [encoder encodeBool:self.shouldPersistAudioFile forKey:DMTrackShouldPersistAudioFileCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -157,7 +156,7 @@ NSUInteger const DMTrackBitDepth = 16;
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeFloatForKey:DMTrackOffsetCodingKey];
-        _isSaved = [decoder decodeBoolForKey:DMTrackIsSavedCodingKey];
+        _shouldPersistAudioFile = [decoder decodeBoolForKey:DMTrackShouldPersistAudioFileCodingKey];
     }
     return self;
 }

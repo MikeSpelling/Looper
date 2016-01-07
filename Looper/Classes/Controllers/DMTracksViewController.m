@@ -56,20 +56,26 @@
 
 -(void)saveLooperWithTitle:(NSString*)title
 {
+    NSString *originalTitle = self.looper.title;
+    self.looper.title = title;
+    
     DMLooper *savedLooper = [self.looperService looperWithTitle:title];
     if (savedLooper && ![savedLooper isEqualToLooper:self.looper]) {
         __weak typeof (self)weakSelf = self;
         [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", title]
                                message:@"Are you sure you want to continue?"
                            cancelTitle:@"No"
+                           cancelBlock:^{
+                               weakSelf.looper.title = originalTitle;
+                           }
                             otherTitle:@"Yes"
                             otherBlock:^{
-                                [weakSelf.looper saveLooperWithTitle:title];
+                                [weakSelf.looperService saveLooper:weakSelf.looper];
                             }
                             otherStyle:UIAlertActionStyleDefault];
     }
     else {
-        [self.looper saveLooperWithTitle:title];
+        [self.looperService saveLooper:self.looper];
     }
 }
 

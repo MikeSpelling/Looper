@@ -46,6 +46,7 @@
 -(void)dm_presentAlertWithTitle:(NSString*)title
                         message:(NSString*)message
                     cancelTitle:(NSString*)cancelTitle
+                    cancelBlock:(void (^)(void))cancelBlock
                      otherTitle:(NSString*)otherTitle
                      otherBlock:(void (^)(void))otherBlock
                      otherStyle:(UIAlertActionStyle)otherStyle
@@ -62,7 +63,11 @@
                                                         }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:cancelTitle
                                                            style:UIAlertActionStyleCancel
-                                                         handler:nil];
+                                                         handler:^(UIAlertAction * _Nonnull action) {
+                                                             if (cancelBlock) {
+                                                                 cancelBlock();
+                                                             }
+                                                         }];
     [alertController addAction:cancelAction];
     [alertController addAction:otherAction];
     [self presentViewController:alertController animated:YES completion:nil];

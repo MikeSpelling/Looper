@@ -101,29 +101,23 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
--(void)deleteLooper
+-(void)deleteAudioFiles
 {
-    [self.looperService deleteLooper:self];
-    
-    [self.baseTrack deleteTrack];
+    [self.baseTrack deleteAudioFile];
     for (DMTrack *track in self.extraTracks) {
-        [track deleteTrack];
+        [track deleteAudioFile];
     }
     _title = nil;
     _baseTrack = nil;
     _extraTracks = nil;
 }
 
--(void)saveLooperWithTitle:(NSString*)title
+-(void)saveLooper
 {
-    self.title = title;
-    
-    self.baseTrack.isSaved = YES;
+    self.baseTrack.shouldPersistAudioFile = YES;
     for (DMTrack *track in self.extraTracks) {
-        track.isSaved = YES;
+        track.shouldPersistAudioFile = YES;
     }
-    
-    [self.looperService saveLooper:self];
 }
 
 -(BOOL)hasBaseTrack

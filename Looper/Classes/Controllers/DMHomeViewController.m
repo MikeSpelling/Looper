@@ -14,6 +14,7 @@
 #import "UIViewController+DMHelpers.h"
 
 @interface DMHomeViewController() <UICollectionViewDataSource, UICollectionViewDelegate>
+@property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) NSArray *savedLoopers;
 
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
@@ -23,11 +24,19 @@
 
 @implementation DMHomeViewController
 
+-(instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        _looperService = [DMLooperService sharedInstance];
+    }
+    return self;
+}
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
     
-    self.savedLoopers = [[DMLooperService sharedInstance] loopers];
+    self.savedLoopers = [self.looperService loopers];
     [self.collectionView reloadData];
 }
 
@@ -55,8 +64,8 @@
     
     __weak typeof (self)weakSelf = self;
     [cell setDeleteBlock:^{
-        [looper deleteLooper];
-        weakSelf.savedLoopers = [[DMLooperService sharedInstance] loopers];
+        [weakSelf.looperService deleteLooper:looper];
+        weakSelf.savedLoopers = [weakSelf.looperService loopers];
         
         [weakSelf.collectionView performBatchUpdates:^{
             [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPath]];
