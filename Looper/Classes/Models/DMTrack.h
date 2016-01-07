@@ -23,7 +23,7 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
--(void)deleteAudioFile;
+-(NSURL*)url;
 
 @property (nonatomic, assign) CGFloat offset;
 @property (nonatomic, assign) BOOL hasPlayedInLoop;

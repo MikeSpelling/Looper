@@ -9,8 +9,6 @@
 #import "DMBaseTrack.h"
 
 @interface DMBaseTrack()
-@property (nonatomic, weak) id<DMBaseTrackDelegate> delegate;
-
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) CGFloat lastKnownPosition;
 @end

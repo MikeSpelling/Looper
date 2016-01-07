@@ -20,9 +20,7 @@
 -(void)pausePlayback;
 
 -(void)saveLooper;
--(void)deleteAudioFiles;
-
--(BOOL)hasBaseTrack;
+-(NSArray*)tracks;
 
 -(BOOL)isEqualToLooper:(id)object;
 

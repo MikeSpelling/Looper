@@ -7,7 +7,6 @@
 //
 
 #import <AVFoundation/AVFoundation.h>
-#import "DMLooperService.h"
 #import "DMLooper.h"
 #import "DMBaseTrack.h"
 #import "DMTrack.h"
@@ -17,8 +16,6 @@ NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
 NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 @interface DMLooper() <DMBaseTrackDelegate>
-@property (nonatomic, strong) DMLooperService *looperService;
-
 @property (nonatomic, strong) DMBaseTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
@@ -42,13 +39,17 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)commonInit
 {
-    _looperService = [DMLooperService sharedInstance];
+    _baseTrack.delegate = self;
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
 -(void)startRecording
 {
     if (self.baseTrack) {
+        if (!self.baseTrack.player.isPlaying) {
+            [self play];
+        }
+        
         self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition];
         [self.extraTracks addObject:self.recordingTrack];
     }
@@ -75,16 +76,12 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)play
 {
     [self.baseTrack play];
-    for (DMTrack *track in self.extraTracks) {
-        [track play];
-    }
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
 -(void)stopPlayback
 {
-    [self.baseTrack stopPlayback];
-    for (DMTrack *track in self.extraTracks) {
+    for (DMTrack *track in [self tracks]) {
         [track stopPlayback];
     }
     
@@ -93,36 +90,23 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)pausePlayback
 {
-    [self.baseTrack pausePlayback];
-    for (DMTrack *track in self.extraTracks) {
+    for (DMTrack *track in [self tracks]) {
         [track pausePlayback];
     }
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
--(void)deleteAudioFiles
-{
-    [self.baseTrack deleteAudioFile];
-    for (DMTrack *track in self.extraTracks) {
-        [track deleteAudioFile];
-    }
-    _title = nil;
-    _baseTrack = nil;
-    _extraTracks = nil;
-}
-
 -(void)saveLooper
 {
-    self.baseTrack.shouldPersistAudioFile = YES;
-    for (DMTrack *track in self.extraTracks) {
+    for (DMTrack *track in [self tracks]) {
         track.shouldPersistAudioFile = YES;
     }
 }
 
--(BOOL)hasBaseTrack
+-(NSArray*)tracks
 {
-    return self.baseTrack != nil;
+    return [@[self.baseTrack] arrayByAddingObjectsFromArray:self.extraTracks];
 }
 
 
@@ -130,7 +114,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)baseTrackDidLoop
 {
-    NSLog(@"Loop");
     for (DMTrack *track in self.extraTracks) {
         track.hasPlayedInLoop = NO;
     }

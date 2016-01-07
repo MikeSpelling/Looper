@@ -8,6 +8,7 @@
 
 #import "DMLooperService.h"
 #import "DMUserDefaultsRepository.h"
+#import "DMFileService.h"
 
 @interface DMLooperService()
 @property (nonatomic, strong) DMUserDefaultsRepository *userDefaultsRepository;
@@ -41,28 +42,28 @@
         [looper saveLooper];
         
         NSMutableArray *loopers = [[self loopers] mutableCopy];
+        
         for (DMLooper *savedLooper in loopers) {
             if ([savedLooper.title isEqualToString:looper.title]) {
-                [savedLooper deleteAudioFiles];
                 [loopers removeObject:savedLooper];
-                break;
             }
         }
         [loopers insertObject:looper atIndex:0];
         
         [self.userDefaultsRepository saveLoopers:loopers];
+        [[DMFileService sharedInstance] deleteUnsavedFiles];
     }
 }
 
 -(void)deleteLooper:(DMLooper*)looper
 {
     NSMutableArray *loopers = [[self loopers] mutableCopy];
+    
     for (DMLooper *savedLooper in loopers) {
         if ([savedLooper.title isEqualToString:looper.title]) {
-            [savedLooper deleteAudioFiles];
             [loopers removeObject:savedLooper];
-            
             [self.userDefaultsRepository saveLoopers:loopers];
+            [[DMFileService sharedInstance] deleteUnsavedFiles];
             return;
         }
     }

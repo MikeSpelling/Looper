@@ -16,5 +16,6 @@
 @interface DMBaseTrack : DMTrack
 
 -(instancetype)initWithDelegate:(id<DMBaseTrackDelegate>)delegate;
+@property (nonatomic, weak) id<DMBaseTrackDelegate> delegate;
 
 @end

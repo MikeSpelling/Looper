@@ -85,7 +85,7 @@
     if (savedLooper) {
         return ![savedLooper isEqualToLooper:self.looper];
     }
-    return [self.looper hasBaseTrack];
+    return [self.looper tracks].count>0;
 }
 
 

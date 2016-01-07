@@ -7,6 +7,7 @@
 //
 
 #import "DMTrack.h"
+#import "DMFileService.h"
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
@@ -32,13 +33,6 @@ NSUInteger const DMTrackBitDepth = 16;
     return self;
 }
 
--(void)dealloc
-{
-    if (!self.shouldPersistAudioFile) {
-        [self deleteAudioFile];
-    }
-}
-
 -(void)startRecording
 {
     self.hasPlayedInLoop = YES;
@@ -54,7 +48,6 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     self.hasPlayedInLoop = YES;
     [self.player play];
-    NSLog(@"Play %@", self.url.absoluteString);
 }
 
 -(void)stopPlayback
@@ -65,16 +58,6 @@ NSUInteger const DMTrackBitDepth = 16;
 -(void)pausePlayback
 {
     [self.player pause];
-}
-
--(void)deleteAudioFile
-{
-    [[NSFileManager defaultManager] removeItemAtURL:self.url error:nil];
-    self.url = nil;
-    self.player = nil;
-    self.recorder = nil;
-    self.offset = 0;
-    self.hasPlayedInLoop = NO;
 }
 
 
@@ -134,7 +117,7 @@ NSUInteger const DMTrackBitDepth = 16;
 -(NSURL*)url
 {
     if (!_url) {
-        NSString *baseFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *baseFilePath = [DMFileService sharedInstance].baseFilePath;
         NSArray *pathComponents = @[baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
         _url = [NSURL fileURLWithPathComponents:pathComponents];
     }
@@ -176,7 +159,8 @@ NSUInteger const DMTrackBitDepth = 16;
     
     DMTrack *track = object;
     
-    if (track.offset != self.offset) {
+    // Precision lost when serialized
+    if (fabs(track.offset-self.offset) > 0.0001) {
         return NO;
     }
     
