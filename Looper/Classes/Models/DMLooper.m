@@ -8,134 +8,148 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
-#import "DMChannel.h"
-#import "DMLoop.h"
-#import "DMPersistenceService.h"
+#import "DMBaseTrack.h"
+#import "DMTrack.h"
 
-@interface DMLooper() <DMChannelDelegate>
-@property (nonatomic, strong) NSArray *originalChannels;
-@property (nonatomic, strong) NSMutableArray *channels;
-@property (nonatomic, strong) DMChannel *recordingChannel;
-@property (nonatomic, strong) NSTimer *timer;
-@property (nonatomic, assign) CGFloat lastKnownPosition;
+NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
+NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
+NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
+
+@interface DMLooper() <DMBaseTrackDelegate>
+@property (nonatomic, strong) DMBaseTrack *baseTrack;
+@property (nonatomic, strong) NSMutableArray *extraTracks;
+
+@property (nonatomic, strong) DMTrack *recordingTrack;
+
+@property (nonatomic, assign) CGFloat playbackPosition;
 @end
+
 
 @implementation DMLooper
 
--(instancetype)initWithLoop:(DMLoop*)loop
+-(instancetype)init
 {
     if (self = [super init]) {
-        _channels = loop.channels ? loop.channels : [NSMutableArray new];
-        _originalChannels = [_channels copy];
+        _extraTracks = [NSMutableArray new];
         
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        [self commonInit];
     }
     return self;
 }
 
--(void)saveLoopWithName:(NSString*)title
+-(void)commonInit
 {
-    DMLoop *loop = [[DMLoop alloc] initWithTitle:title channels:self.channels];
-    [[DMPersistenceService sharedInstance] saveLoop:loop];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
--(void)recordNewLoop
+-(void)startRecording
 {
+    if (self.baseTrack) {
+        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition];
+        [self.extraTracks addObject:self.recordingTrack];
+    }
+    else {
+        self.baseTrack = [[DMBaseTrack alloc] initWithDelegate:self];
+        self.recordingTrack = self.baseTrack;
+    }
+    
+    [self.recordingTrack startRecording];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
-    
-    DMChannel *channel = [[DMChannel alloc] initWithDelegate:self index:self.channels.count offset:self.lastKnownPosition];
-    [channel record];
-    self.recordingChannel = channel;
-    
-    [self.channels addObject:channel];
 }
 
--(void)stopRecordingLoop
+-(void)stopRecording
 {
-    [self.recordingChannel stopRecording];
+    [self.recordingTrack stopRecording];
     
-    if (self.recordingChannel.index == 0) {
-        [self.recordingChannel play];
-        [self startLoopTimer];
+    if (self.recordingTrack.isBaseTrack) {
+        [self.recordingTrack play];
     }
     
-    self.recordingChannel = nil;
-}
-
--(void)stopPlayback
-{
-    for (DMChannel *channel in self.channels) {
-        [channel stopPlayback];
-    }
-    
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
-    [self stopTimer];
-}
-
--(void)pausePlayback
-{
-    for (DMChannel *channel in self.channels) {
-        [channel pausePlayback];
-    }
-    
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
-    [self stopTimer];
+    self.recordingTrack = nil;
 }
 
 -(void)play
 {
-    for (DMChannel *channel in self.channels) {
-        [channel play];
+    [self.baseTrack play];
+    for (DMTrack *track in self.extraTracks) {
+        [track play];
     }
-    [self startLoopTimer];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
--(BOOL)isRecording
+-(void)stopPlayback
 {
-    return self.recordingChannel != nil;
-}
-
--(BOOL)hasChanges
-{
-    return ![self.originalChannels isEqualToArray:self.channels];
-}
-
-
-#pragma mark - Internal
-
--(DMChannel*)baseChannel
-{
-    return [self.channels firstObject];
-}
-
--(void)startLoopTimer
-{
-    if (self.timer) {
-        [self stopTimer];
+    [self.baseTrack stopPlayback];
+    for (DMTrack *track in self.extraTracks) {
+        [track stopPlayback];
     }
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
-}
-
--(void)stopTimer
-{
-    [self.timer invalidate];
-    self.timer = nil;
-}
-
--(void)timerFired
-{
-    CGFloat currentPosition = [self baseChannel].currentTime;
-    BOOL looped = currentPosition < self.lastKnownPosition;
-    if (looped) {
-        NSLog(@"Loop");
-    }
-    self.lastKnownPosition = currentPosition;
     
-    for (NSUInteger i=1; i<self.channels.count; i++) {
-        DMChannel *channel = self.channels[i];
-        [channel playIfNeededAtOffset:currentPosition looped:looped];
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+}
+
+-(void)pausePlayback
+{
+    [self.baseTrack pausePlayback];
+    for (DMTrack *track in self.extraTracks) {
+        [track pausePlayback];
     }
+    
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+}
+
+-(void)deleteLooper
+{
+    [self.baseTrack deleteTrack];
+    for (DMTrack *track in self.extraTracks) {
+        [track deleteTrack];
+    }
+    _title = nil;
+    _baseTrack = nil;
+    _extraTracks = nil;
+}
+
+
+#pragma mark - DMBaseTrackDelegate
+
+-(void)baseTrackDidLoop
+{
+    NSLog(@"Loop");
+    for (DMTrack *track in self.extraTracks) {
+        track.hasPlayedInLoop = NO;
+    }
+}
+
+-(void)baseTrackUpdatePosition:(CGFloat)position
+{
+    self.playbackPosition = position;
+    
+    for (DMTrack *track in self.extraTracks) {
+        if (!track.hasPlayedInLoop && position >= track.offset) {
+            [track play];
+        }
+    }
+}
+
+
+#pragma mark - NSCoding
+
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.title forKey:DMLooperTitleCodingKey];
+    [encoder encodeObject:self.baseTrack forKey:DMLooperBaseTrackCodingKey];
+    [encoder encodeObject:self.extraTracks forKey:DMLooperExtraTracksCodingKey];
+}
+
+-(id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        _title = [decoder decodeObjectForKey:DMLooperTitleCodingKey];
+        _baseTrack = [decoder decodeObjectForKey:DMLooperBaseTrackCodingKey];
+        _extraTracks = [decoder decodeObjectForKey:DMLooperExtraTracksCodingKey];
+        
+        [self commonInit];
+    }
+    return self;
 }
 
 @end

@@ -7,20 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DMLoop.h"
 
 @interface DMLooper : NSObject
 
--(instancetype)initWithLoop:(DMLoop*)loop;
+@property (nonatomic, strong) NSString *title;
 
--(void)recordNewLoop;
--(void)stopRecordingLoop;
+-(void)startRecording;
+-(void)stopRecording;
+
+-(void)play;
 -(void)stopPlayback;
 -(void)pausePlayback;
--(void)play;
--(BOOL)isRecording;
--(BOOL)hasChanges;
 
--(void)saveLoopWithName:(NSString*)title;
+-(void)deleteLooper;
 
 @end

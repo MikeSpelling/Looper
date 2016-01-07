@@ -7,14 +7,14 @@
 //
 
 #import "DMHomeViewController.h"
-#import "DMLoopViewController.h"
+#import "DMLooperViewController.h"
 #import "DMSavedLoopCell.h"
 #import "DMSavedLoopHeader.h"
-#import "DMPersistenceService.h"
+#import "DMLooperService.h"
 #import "UIViewController+DMHelpers.h"
 
 @interface DMHomeViewController() <UICollectionViewDataSource, UICollectionViewDelegate>
-@property (nonatomic, strong) NSArray *savedLoops;
+@property (nonatomic, strong) NSArray *savedLoopers;
 
 @property (nonatomic, strong) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, strong) IBOutlet UIView *titleView;
@@ -27,7 +27,7 @@
 {
     [super viewWillAppear:animated];
     
-    self.savedLoops = [[DMPersistenceService sharedInstance] loops];
+    self.savedLoopers = [[DMLooperService sharedInstance] loopers];
     [self.collectionView reloadData];
 }
 
@@ -44,19 +44,19 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return self.savedLoops.count;
+    return self.savedLoopers.count;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DMSavedLoopCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMSavedLoopCellKey forIndexPath:indexPath];
-    DMLoop *loop = self.savedLoops[indexPath.item];
-    cell.label.text = loop.title;
+    DMLooper *looper = self.savedLoopers[indexPath.item];
+    cell.label.text = looper.title;
     
     __weak typeof (self)weakSelf = self;
     [cell setDeleteBlock:^{
-        [[DMPersistenceService sharedInstance] deleteLoop:loop];
-        weakSelf.savedLoops = [[DMPersistenceService sharedInstance] loops];
+        [[DMLooperService sharedInstance] deleteLooper:looper];
+        weakSelf.savedLoopers = [[DMLooperService sharedInstance] loopers];
         
         [weakSelf.collectionView performBatchUpdates:^{
             [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPath]];
@@ -73,7 +73,7 @@
         __weak typeof (self)weakSelf = self;
         DMSavedLoopHeader *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:DMSavedLoopHeaderKey forIndexPath:indexPath];
         [header setTapHandler:^{
-            [weakSelf goToLooper];
+            [weakSelf presentLooperViewControllerWithLooper:[DMLooper new]];
         }];
         return header;
     }
@@ -110,9 +110,7 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    DMLoop *loop = self.savedLoops[indexPath.item];
-    DMLoopViewController *viewController = [[DMLoopViewController dm_instantiateFromStoryboard] withLoop:loop];
-    [self.navigationController presentViewController:viewController animated:YES completion:nil];
+    [self presentLooperViewControllerWithLooper:self.savedLoopers[indexPath.item]];
 }
 
 
@@ -140,9 +138,10 @@
     self.collectionView.scrollIndicatorInsets = edgeInsets;
 }
 
--(void)goToLooper
+-(void)presentLooperViewControllerWithLooper:(DMLooper*)looper
 {
-    [self performSegueWithIdentifier:@"DMPresentLoopViewController" sender:self];
+    DMLooperViewController *viewController = [[DMLooperViewController dm_instantiateFromStoryboard] withLooper:looper];
+    [self.navigationController presentViewController:viewController animated:YES completion:nil];
 }
 
 @end

@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DMLoop.h"
+#import "DMLooper.h"
 
 @interface DMTracksViewController : UIViewController
 
--(instancetype)initWithLoop:(DMLoop*)loop;
+-(instancetype)initWithLooper:(DMLooper*)looper;
 
--(void)saveLoopNamed:(NSString*)title;
--(BOOL)hasChanges;
+-(void)saveLooperNamed:(NSString*)title;
+
+@property (nonatomic, assign, readonly) BOOL hasChanges;
 
 @end

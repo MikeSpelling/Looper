@@ -7,11 +7,10 @@
 //
 
 #import "DMTracksViewController.h"
-#import "DMLooper.h"
+#import "DMLooperService.h"
 
 @interface DMTracksViewController ()
 @property (nonatomic, strong) DMLooper *looper;
-@property (nonatomic, strong) DMLoop *loop;
 
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
 @property (nonatomic, weak) IBOutlet UIButton *pauseButton;
@@ -24,11 +23,10 @@
 
 @implementation DMTracksViewController
 
--(instancetype)initWithLoop:(DMLoop*)loop
+-(instancetype)initWithLooper:(DMLooper*)looper
 {
     if (self = [super initWithNibName:@"DMTracksView" bundle:nil]) {
-        _loop = loop;
-        _looper = [[DMLooper alloc] initWithLoop:loop];
+        _looper = looper;
     }
     return self;
 }
@@ -37,7 +35,7 @@
 {
     [super viewDidLoad];
     
-    self.playButton.alpha = self.loop.channels.count>0 ? 1 : 0;
+    self.playButton.alpha = self.looper ? 1 : 0;
     self.pauseButton.alpha = 0;
     self.stopButton.alpha = 0;
     self.startRecordingButton.alpha = 1;
@@ -53,14 +51,10 @@
 
 #pragma mark - DMTracksViewController
 
--(void)saveLoopNamed:(NSString*)title
+-(void)saveLooperNamed:(NSString*)title
 {
-    [self.looper saveLoopWithName:title];
-}
-
--(BOOL)hasChanges
-{
-    return self.looper.hasChanges;
+    self.looper.title = title;
+    [[DMLooperService sharedInstance] saveLooper:self.looper];
 }
 
 
@@ -95,7 +89,7 @@
 
 -(IBAction)finishRecordingTapped
 {
-    [self.looper stopRecordingLoop];
+    [self.looper stopRecording];
     
     self.playButton.alpha = 0;
     self.pauseButton.alpha = 1;
@@ -108,17 +102,19 @@
 
 -(IBAction)startRecordingTapped
 {
-    [self.looper recordNewLoop];
+    [self.looper startRecording];
     
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;
     self.nextRecordingButton.alpha = 1;
+    
+    _hasChanges = YES;
 }
 
 -(IBAction)nextRecordingTapped
 {
-    [self.looper stopRecordingLoop];
-    [self.looper recordNewLoop];
+    [self.looper stopRecording];
+    [self.looper startRecording];
     
     self.playButton.alpha = 1;
     self.pauseButton.alpha = 0;

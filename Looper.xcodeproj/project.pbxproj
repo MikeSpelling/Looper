@@ -12,10 +12,12 @@
 		900F10BA1C3B2351003FF3B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 900F10B91C3B2351003FF3B1 /* Assets.xcassets */; };
 		900F10C81C3B2351003FF3B1 /* LooperTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10C71C3B2351003FF3B1 /* LooperTests.m */; };
 		900F10D31C3B2351003FF3B1 /* LooperUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10D21C3B2351003FF3B1 /* LooperUITests.m */; };
+		9048DDC81C3DB090005D3C08 /* DMBaseTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */; };
+		9048DDCC1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */; };
 		90C21F0F1C3D57BD00057999 /* UIView+DMAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEA1C3D57BD00057999 /* UIView+DMAutoLayout.m */; };
 		90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEC1C3D57BD00057999 /* UIView+DMNibLoader.m */; };
 		90C21F111C3D57BD00057999 /* UIViewController+DMHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEE1C3D57BD00057999 /* UIViewController+DMHelpers.m */; };
-		90C21F191C3D57BD00057999 /* DMPersistenceService.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F021C3D57BD00057999 /* DMPersistenceService.m */; };
+		90C21F191C3D57BD00057999 /* DMLooperService.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F021C3D57BD00057999 /* DMLooperService.m */; };
 		90C21F1C1C3D57BD00057999 /* DMSavedLoopCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90C21F0B1C3D57BD00057999 /* DMSavedLoopCell.xib */; };
 		90C21F1D1C3D57BD00057999 /* DMSavedLoopHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90C21F0C1C3D57BD00057999 /* DMSavedLoopHeader.xib */; };
 		90C21F1E1C3D57BD00057999 /* DMTracksView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90C21F0E1C3D57BD00057999 /* DMTracksView.xib */; };
@@ -23,11 +25,10 @@
 		90C21F241C3D581B00057999 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 90C21F211C3D581B00057999 /* Main.storyboard */; };
 		90C21F2B1C3D588600057999 /* DMSavedLoopCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F281C3D588600057999 /* DMSavedLoopCell.m */; };
 		90C21F2C1C3D588600057999 /* DMSavedLoopHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F2A1C3D588600057999 /* DMSavedLoopHeader.m */; };
-		90C21F341C3D589400057999 /* DMChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F2F1C3D589400057999 /* DMChannel.m */; };
-		90C21F351C3D589400057999 /* DMLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F311C3D589400057999 /* DMLoop.m */; };
+		90C21F341C3D589400057999 /* DMTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F2F1C3D589400057999 /* DMTrack.m */; };
 		90C21F361C3D589400057999 /* DMLooper.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F331C3D589400057999 /* DMLooper.m */; };
 		90C21F401C3D58A000057999 /* DMHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F391C3D58A000057999 /* DMHomeViewController.m */; };
-		90C21F411C3D58A000057999 /* DMLoopViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3B1C3D58A000057999 /* DMLoopViewController.m */; };
+		90C21F411C3D58A000057999 /* DMLooperViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3B1C3D58A000057999 /* DMLooperViewController.m */; };
 		90C21F421C3D58A000057999 /* DMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3D1C3D58A000057999 /* DMNavigationController.m */; };
 		90C21F431C3D58A000057999 /* DMTracksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21F3F1C3D58A000057999 /* DMTracksViewController.m */; };
 /* End PBXBuildFile section */
@@ -62,14 +63,18 @@
 		900F10CE1C3B2351003FF3B1 /* LooperUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LooperUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		900F10D21C3B2351003FF3B1 /* LooperUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LooperUITests.m; sourceTree = "<group>"; };
 		900F10D41C3B2351003FF3B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9048DDC61C3DB090005D3C08 /* DMBaseTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMBaseTrack.h; sourceTree = "<group>"; };
+		9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMBaseTrack.m; sourceTree = "<group>"; };
+		9048DDCA1C3DC9D5005D3C08 /* DMUserDefaultsRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMUserDefaultsRepository.h; sourceTree = "<group>"; };
+		9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMUserDefaultsRepository.m; sourceTree = "<group>"; };
 		90C21EE91C3D57BD00057999 /* UIView+DMAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DMAutoLayout.h"; sourceTree = "<group>"; };
 		90C21EEA1C3D57BD00057999 /* UIView+DMAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DMAutoLayout.m"; sourceTree = "<group>"; };
 		90C21EEB1C3D57BD00057999 /* UIView+DMNibLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DMNibLoader.h"; sourceTree = "<group>"; };
 		90C21EEC1C3D57BD00057999 /* UIView+DMNibLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DMNibLoader.m"; sourceTree = "<group>"; };
 		90C21EED1C3D57BD00057999 /* UIViewController+DMHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+DMHelpers.h"; sourceTree = "<group>"; };
 		90C21EEE1C3D57BD00057999 /* UIViewController+DMHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+DMHelpers.m"; sourceTree = "<group>"; };
-		90C21F011C3D57BD00057999 /* DMPersistenceService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMPersistenceService.h; sourceTree = "<group>"; };
-		90C21F021C3D57BD00057999 /* DMPersistenceService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMPersistenceService.m; sourceTree = "<group>"; };
+		90C21F011C3D57BD00057999 /* DMLooperService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLooperService.h; sourceTree = "<group>"; };
+		90C21F021C3D57BD00057999 /* DMLooperService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLooperService.m; sourceTree = "<group>"; };
 		90C21F0B1C3D57BD00057999 /* DMSavedLoopCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMSavedLoopCell.xib; sourceTree = "<group>"; };
 		90C21F0C1C3D57BD00057999 /* DMSavedLoopHeader.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMSavedLoopHeader.xib; sourceTree = "<group>"; };
 		90C21F0E1C3D57BD00057999 /* DMTracksView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DMTracksView.xib; sourceTree = "<group>"; };
@@ -79,16 +84,14 @@
 		90C21F281C3D588600057999 /* DMSavedLoopCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSavedLoopCell.m; sourceTree = "<group>"; };
 		90C21F291C3D588600057999 /* DMSavedLoopHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMSavedLoopHeader.h; sourceTree = "<group>"; };
 		90C21F2A1C3D588600057999 /* DMSavedLoopHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMSavedLoopHeader.m; sourceTree = "<group>"; };
-		90C21F2E1C3D589400057999 /* DMChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMChannel.h; sourceTree = "<group>"; };
-		90C21F2F1C3D589400057999 /* DMChannel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMChannel.m; sourceTree = "<group>"; };
-		90C21F301C3D589400057999 /* DMLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLoop.h; sourceTree = "<group>"; };
-		90C21F311C3D589400057999 /* DMLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLoop.m; sourceTree = "<group>"; };
+		90C21F2E1C3D589400057999 /* DMTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTrack.h; sourceTree = "<group>"; };
+		90C21F2F1C3D589400057999 /* DMTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMTrack.m; sourceTree = "<group>"; };
 		90C21F321C3D589400057999 /* DMLooper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLooper.h; sourceTree = "<group>"; };
 		90C21F331C3D589400057999 /* DMLooper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLooper.m; sourceTree = "<group>"; };
 		90C21F381C3D58A000057999 /* DMHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMHomeViewController.h; sourceTree = "<group>"; };
 		90C21F391C3D58A000057999 /* DMHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMHomeViewController.m; sourceTree = "<group>"; };
-		90C21F3A1C3D58A000057999 /* DMLoopViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLoopViewController.h; sourceTree = "<group>"; };
-		90C21F3B1C3D58A000057999 /* DMLoopViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLoopViewController.m; sourceTree = "<group>"; };
+		90C21F3A1C3D58A000057999 /* DMLooperViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMLooperViewController.h; sourceTree = "<group>"; };
+		90C21F3B1C3D58A000057999 /* DMLooperViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMLooperViewController.m; sourceTree = "<group>"; };
 		90C21F3C1C3D58A000057999 /* DMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMNavigationController.h; sourceTree = "<group>"; };
 		90C21F3D1C3D58A000057999 /* DMNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMNavigationController.m; sourceTree = "<group>"; };
 		90C21F3E1C3D58A000057999 /* DMTracksViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMTracksViewController.h; sourceTree = "<group>"; };
@@ -188,11 +191,21 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		9048DDC91C3DC9B9005D3C08 /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				9048DDCA1C3DC9D5005D3C08 /* DMUserDefaultsRepository.h */,
+				9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
 		90C21EE71C3D57BD00057999 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
 				90C21EE81C3D57BD00057999 /* Categories */,
 				90C21F371C3D58A000057999 /* Controllers */,
+				9048DDC91C3DC9B9005D3C08 /* Repositories */,
 				90C21EFF1C3D57BD00057999 /* Services */,
 				90C21F2D1C3D589400057999 /* Models */,
 				90C21F251C3D588600057999 /* Views */,
@@ -224,8 +237,8 @@
 		90C21F001C3D57BD00057999 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
-				90C21F011C3D57BD00057999 /* DMPersistenceService.h */,
-				90C21F021C3D57BD00057999 /* DMPersistenceService.m */,
+				90C21F011C3D57BD00057999 /* DMLooperService.h */,
+				90C21F021C3D57BD00057999 /* DMLooperService.m */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -280,10 +293,10 @@
 		90C21F2D1C3D589400057999 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				90C21F2E1C3D589400057999 /* DMChannel.h */,
-				90C21F2F1C3D589400057999 /* DMChannel.m */,
-				90C21F301C3D589400057999 /* DMLoop.h */,
-				90C21F311C3D589400057999 /* DMLoop.m */,
+				9048DDC61C3DB090005D3C08 /* DMBaseTrack.h */,
+				9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */,
+				90C21F2E1C3D589400057999 /* DMTrack.h */,
+				90C21F2F1C3D589400057999 /* DMTrack.m */,
 				90C21F321C3D589400057999 /* DMLooper.h */,
 				90C21F331C3D589400057999 /* DMLooper.m */,
 			);
@@ -295,8 +308,8 @@
 			children = (
 				90C21F381C3D58A000057999 /* DMHomeViewController.h */,
 				90C21F391C3D58A000057999 /* DMHomeViewController.m */,
-				90C21F3A1C3D58A000057999 /* DMLoopViewController.h */,
-				90C21F3B1C3D58A000057999 /* DMLoopViewController.m */,
+				90C21F3A1C3D58A000057999 /* DMLooperViewController.h */,
+				90C21F3B1C3D58A000057999 /* DMLooperViewController.m */,
 				90C21F3C1C3D58A000057999 /* DMNavigationController.h */,
 				90C21F3D1C3D58A000057999 /* DMNavigationController.m */,
 				90C21F3E1C3D58A000057999 /* DMTracksViewController.h */,
@@ -440,17 +453,18 @@
 			files = (
 				90C21F2B1C3D588600057999 /* DMSavedLoopCell.m in Sources */,
 				90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */,
-				90C21F191C3D57BD00057999 /* DMPersistenceService.m in Sources */,
+				90C21F191C3D57BD00057999 /* DMLooperService.m in Sources */,
 				90C21F2C1C3D588600057999 /* DMSavedLoopHeader.m in Sources */,
 				90C21F111C3D57BD00057999 /* UIViewController+DMHelpers.m in Sources */,
 				90C21F0F1C3D57BD00057999 /* UIView+DMAutoLayout.m in Sources */,
-				90C21F351C3D589400057999 /* DMLoop.m in Sources */,
 				900F10B21C3B2351003FF3B1 /* AppDelegate.m in Sources */,
 				90C21F431C3D58A000057999 /* DMTracksViewController.m in Sources */,
+				9048DDC81C3DB090005D3C08 /* DMBaseTrack.m in Sources */,
 				90C21F421C3D58A000057999 /* DMNavigationController.m in Sources */,
 				90C21F361C3D589400057999 /* DMLooper.m in Sources */,
-				90C21F341C3D589400057999 /* DMChannel.m in Sources */,
-				90C21F411C3D58A000057999 /* DMLoopViewController.m in Sources */,
+				90C21F341C3D589400057999 /* DMTrack.m in Sources */,
+				90C21F411C3D58A000057999 /* DMLooperViewController.m in Sources */,
+				9048DDCC1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m in Sources */,
 				90C21F401C3D58A000057999 /* DMHomeViewController.m in Sources */,
 				900F10AF1C3B2351003FF3B1 /* main.m in Sources */,
 			);

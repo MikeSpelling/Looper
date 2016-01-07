@@ -1,18 +1,18 @@
 //
-//  DMLoopViewController.m
+//  DMLooperViewController.m
 //  Looper
 //
 //  Created by Michael Spelling on 04/01/2016.
 //  Copyright © 2016 DM. All rights reserved.
 //
 
-#import "DMLoopViewController.h"
+#import "DMLooperViewController.h"
 #import "DMTracksViewController.h"
 #import "UIViewController+DMHelpers.h"
-#import "DMPersistenceService.h"
+#import "DMLooperService.h"
 
-@interface DMLoopViewController() <UITextFieldDelegate>
-@property (nonatomic, strong) DMLoop *loop;
+@interface DMLooperViewController() <UITextFieldDelegate>
+@property (nonatomic, strong) DMLooper *looper;
 
 @property (nonatomic, strong) DMTracksViewController *tracksViewController;
 
@@ -23,7 +23,7 @@
 @end
 
 
-@implementation DMLoopViewController
+@implementation DMLooperViewController
 
 -(instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -33,9 +33,9 @@
     return self;
 }
 
--(instancetype)withLoop:(DMLoop*)loop
+-(instancetype)withLooper:(DMLooper*)looper
 {
-    _loop = loop;
+    _looper = looper;
     return self;
 }
 
@@ -48,10 +48,10 @@
 {
     [super viewDidLoad];
     
-    self.tracksViewController = [[DMTracksViewController alloc] initWithLoop:self.loop];
+    self.tracksViewController = [[DMTracksViewController alloc] initWithLooper:self.looper];
     [self dm_addExpandingChildViewController:self.tracksViewController toView:self.containerView];
     
-    self.titleLabel.text = self.loop.title ? self.loop.title : @"Loop1";
+    self.titleLabel.text = self.looper.title ? self.looper.title : @"Loop1";
     self.titleTextField.text = self.titleLabel.text;
     self.titleTextField.alpha = 0;
     self.keyboardDismissButton.alpha = 0;
@@ -80,7 +80,7 @@
 
 -(IBAction)saveTapped
 {
-    if ([[DMPersistenceService sharedInstance] loopWithTitle:self.titleLabel.text] &&
+    if ([[DMLooperService sharedInstance] looperWithTitle:self.titleLabel.text] &&
         [self.tracksViewController hasChanges]) {
         __weak typeof (self)weakSelf = self;
         [self dm_presentAlertWithTitle:[NSString stringWithFormat:@"Overwriting %@", self.titleLabel.text]
@@ -140,7 +140,7 @@
 
 -(void)saveAndDismiss
 {
-    [self.tracksViewController saveLoopNamed:self.titleLabel.text];
+    [self.tracksViewController saveLooperNamed:self.titleLabel.text];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
