@@ -7,7 +7,7 @@
 //
 
 #import "DMTrack.h"
-#import "DMFileService.h"
+#import "DMEnvironment.h"
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
@@ -121,8 +121,7 @@ NSUInteger const DMTrackBitDepth = 16;
 -(NSURL*)url
 {
     if (!_url) {
-        NSString *baseFilePath = [DMFileService sharedInstance].baseFilePath;
-        NSArray *pathComponents = @[baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
+        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
         _url = [NSURL fileURLWithPathComponents:pathComponents];
     }
     return _url;

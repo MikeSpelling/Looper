@@ -7,7 +7,11 @@
 //
 
 #import "DMFileRepository.h"
-#import "DMTrack.h"
+#import "DMEnvironment.h"
+
+@interface DMFileRepository()
+@property (nonatomic, strong) DMEnvironment *environment;
+@end
 
 @implementation DMFileRepository
 
@@ -25,19 +29,19 @@
 -(instancetype)init
 {
     if (self = [super init]) {
-        _baseFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        _environment = [DMEnvironment sharedInstance];
     }
     return self;
 }
 
 -(NSArray*)files
 {
-    return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[self baseFilePath] error:nil];
+    return [[NSFileManager defaultManager] contentsOfDirectoryAtPath:self.environment.baseFilePath error:nil];
 }
 
 -(void)deleteFileNamed:(NSString*)filename
 {
-    NSURL *url = [NSURL fileURLWithPathComponents:@[[self baseFilePath], filename]];
+    NSURL *url = [NSURL fileURLWithPathComponents:@[self.environment.baseFilePath, filename]];
     [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
 }
 

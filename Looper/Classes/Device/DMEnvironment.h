@@ -1,5 +1,5 @@
 //
-//  DMFileService.h
+//  DMEnvironment.h
 //  Looper
 //
 //  Created by Michael Spelling on 07/01/2016.
@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface DMFileService : NSObject
+@interface DMEnvironment : NSObject
 
-+(DMFileService*)sharedInstance;
++(DMEnvironment*)sharedInstance;
 
--(void)deleteUnsavedFiles;
+@property (nonatomic, strong, readonly) NSString *baseFilePath;
 
 @end

@@ -15,6 +15,4 @@
 -(NSArray*)files;
 -(void)deleteFileNamed:(NSString*)filename;
 
-@property (nonatomic, strong, readonly) NSString *baseFilePath;
-
 @end

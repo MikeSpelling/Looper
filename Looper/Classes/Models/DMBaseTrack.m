@@ -47,11 +47,6 @@
     [self stopTimer];
 }
 
--(BOOL)isBaseTrack
-{
-    return YES;
-}
-
 -(AVAudioPlayer*)player
 {
     if (!_player) {

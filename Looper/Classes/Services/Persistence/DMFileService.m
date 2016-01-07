@@ -32,8 +32,6 @@
 {
     if (self = [super init]) {
         _fileRepository = [DMFileRepository sharedInstance];
-        _baseFilePath = _fileRepository.baseFilePath;
-        NSLog(@"%@", _baseFilePath);
     }
     return self;
 }

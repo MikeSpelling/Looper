@@ -14,8 +14,6 @@
 
 -(instancetype)initWithOffset:(CGFloat)offset;
 
--(BOOL)isBaseTrack;
-
 -(void)startRecording;
 -(void)stopRecording;
 
@@ -25,9 +23,9 @@
 
 -(NSString*)filename;
 
-@property (nonatomic, assign) CGFloat offset;
-@property (nonatomic, assign) BOOL hasPlayedInLoop;
+@property (nonatomic, assign, readonly) CGFloat offset;
 @property (nonatomic, strong) AVAudioPlayer *player;
+@property (nonatomic, assign) BOOL hasPlayedInLoop;
 
 -(BOOL)isEqualToTrack:(id)object;
 

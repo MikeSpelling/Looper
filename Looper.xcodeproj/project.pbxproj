@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		90001E9C1C3EBD1E0099615B /* DMFileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 90001E9B1C3EBD1E0099615B /* DMFileService.m */; };
+		90001EA01C3EC9FD0099615B /* DMEnvironment.m in Sources */ = {isa = PBXBuildFile; fileRef = 90001E9F1C3EC9FD0099615B /* DMEnvironment.m */; };
 		900F10AF1C3B2351003FF3B1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10AE1C3B2351003FF3B1 /* main.m */; };
 		900F10B21C3B2351003FF3B1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 900F10B11C3B2351003FF3B1 /* AppDelegate.m */; };
 		900F10BA1C3B2351003FF3B1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 900F10B91C3B2351003FF3B1 /* Assets.xcassets */; };
@@ -55,6 +56,8 @@
 /* Begin PBXFileReference section */
 		90001E9A1C3EBD1E0099615B /* DMFileService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMFileService.h; sourceTree = "<group>"; };
 		90001E9B1C3EBD1E0099615B /* DMFileService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMFileService.m; sourceTree = "<group>"; };
+		90001E9E1C3EC9FD0099615B /* DMEnvironment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMEnvironment.h; sourceTree = "<group>"; };
+		90001E9F1C3EC9FD0099615B /* DMEnvironment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMEnvironment.m; sourceTree = "<group>"; };
 		900F10AA1C3B2351003FF3B1 /* Looper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Looper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		900F10AE1C3B2351003FF3B1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		900F10B01C3B2351003FF3B1 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -129,6 +132,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		90001E9D1C3EC9EB0099615B /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				90001E9E1C3EC9FD0099615B /* DMEnvironment.h */,
+				90001E9F1C3EC9FD0099615B /* DMEnvironment.m */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
 		900F10A11C3B2351003FF3B1 = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +225,7 @@
 			children = (
 				90C21EE81C3D57BD00057999 /* Categories */,
 				90C21F371C3D58A000057999 /* Controllers */,
+				90001E9D1C3EC9EB0099615B /* Device */,
 				9048DDC91C3DC9B9005D3C08 /* Repositories */,
 				90C21EFF1C3D57BD00057999 /* Services */,
 				90C21F2D1C3D589400057999 /* Models */,
@@ -465,6 +478,7 @@
 				90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */,
 				90C21F191C3D57BD00057999 /* DMLooperService.m in Sources */,
 				90C21F2C1C3D588600057999 /* DMSavedLoopHeader.m in Sources */,
+				90001EA01C3EC9FD0099615B /* DMEnvironment.m in Sources */,
 				90C21F111C3D57BD00057999 /* UIViewController+DMHelpers.m in Sources */,
 				90C21F0F1C3D57BD00057999 /* UIView+DMAutoLayout.m in Sources */,
 				90001E9C1C3EBD1E0099615B /* DMFileService.m in Sources */,
