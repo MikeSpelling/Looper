@@ -15,13 +15,14 @@ NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
 NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
 NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
-@interface DMLooper() <DMBaseTrackDelegate>
+@interface DMLooper() <DMBaseTrackDelegate, DMTrackRecordDelegate>
 @property (nonatomic, strong) DMBaseTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
 @property (nonatomic, strong) DMTrack *recordingTrack;
 
 @property (nonatomic, assign) CGFloat playbackPosition;
+@property (nonatomic, assign) CGFloat recordPosition;
 @end
 
 
@@ -39,7 +40,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)commonInit
 {
-    _baseTrack.delegate = self;
+    _baseTrack.baseTrackDelegate = self;
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
@@ -50,11 +51,11 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
             [self play];
         }
         
-        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition];
+        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition recordDelgate:self];
         [self.extraTracks addObject:self.recordingTrack];
     }
     else {
-        self.baseTrack = [[DMBaseTrack alloc] initWithDelegate:self];
+        self.baseTrack = [[DMBaseTrack alloc] initWithBaseTrackDelegate:self recordDelegate:self];
         self.recordingTrack = self.baseTrack;
     }
     
@@ -71,6 +72,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     }
     
     self.recordingTrack = nil;
+    self.recordPosition = 0;
 }
 
 -(void)play
@@ -84,6 +86,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     for (DMTrack *track in [self tracks]) {
         [track stopPlayback];
     }
+    self.playbackPosition = 0;
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
@@ -92,6 +95,16 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 {
     for (DMTrack *track in [self tracks]) {
         [track pausePlayback];
+    }
+    
+    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+}
+
+-(void)tearDown
+{
+    for (DMTrack *track in [self tracks]) {
+        [track stopPlayback];
+        [track stopRecording];
     }
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
@@ -128,6 +141,14 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
             [track play];
         }
     }
+}
+
+
+#pragma mark - DMTrackRecordDelegate
+
+-(void)updateRecordPosition:(CGFloat)position
+{
+    self.recordPosition = position;
 }
 
 

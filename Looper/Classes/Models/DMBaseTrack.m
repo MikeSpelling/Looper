@@ -18,10 +18,10 @@
 
 @synthesize player = _player;
 
--(instancetype)initWithDelegate:(id<DMBaseTrackDelegate>)delegate
+-(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate recordDelegate:(id<DMTrackRecordDelegate>)recordDelegate
 {
-    if (self = [super initWithOffset:0]) {
-        _delegate = delegate;
+    if (self = [super initWithOffset:0 recordDelgate:recordDelegate]) {
+        _baseTrackDelegate = baseTrackDelegate;
     }
     return self;
 }
@@ -75,11 +75,11 @@
 
 -(void)timerFired
 {
-    [self.delegate baseTrackUpdatePosition:self.player.currentTime];
+    [self.baseTrackDelegate baseTrackUpdatePosition:self.player.currentTime];
     
     CGFloat currentPosition = self.player.currentTime;
     if (currentPosition < self.lastKnownPosition) {
-        [self.delegate baseTrackDidLoop];
+        [self.baseTrackDelegate baseTrackDidLoop];
     }
     self.lastKnownPosition = currentPosition;
 }

@@ -10,9 +10,14 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+@protocol DMTrackRecordDelegate <NSObject>
+-(void)updateRecordPosition:(CGFloat)position;
+@end
+
+
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(CGFloat)offset;
+-(instancetype)initWithOffset:(CGFloat)offset recordDelgate:(id<DMTrackRecordDelegate>)recordDelegate;
 
 -(void)startRecording;
 -(void)stopRecording;
@@ -22,6 +27,7 @@
 -(void)pausePlayback;
 
 -(NSString*)filename;
+-(BOOL)isRecording;
 
 @property (nonatomic, assign, readonly) CGFloat offset;
 @property (nonatomic, strong) AVAudioPlayer *player;

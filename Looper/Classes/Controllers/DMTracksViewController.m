@@ -52,7 +52,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    [self.looper stopPlayback];
+    [self.looper tearDown];
 }
 
 
@@ -139,6 +139,7 @@
 -(IBAction)startRecordingTapped
 {
     [self.looper startRecording];
+    [self.collectionView reloadData];
     
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;

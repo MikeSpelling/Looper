@@ -19,15 +19,21 @@ NSUInteger const DMTrackBitDepth = 16;
 @interface DMTrack()
 @property (nonatomic, strong) NSURL *url;
 @property (nonatomic, strong) AVAudioRecorder *recorder;
+@property (nonatomic, strong) NSTimer *recordTimer;
+@property (nonatomic, strong) id<DMTrackRecordDelegate>recordDelegate;
 @end
 
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(CGFloat)offset
+-(instancetype)initWithOffset:(CGFloat)offset recordDelgate:(id<DMTrackRecordDelegate>)recordDelegate
 {
     if (self = [super init]) {
         _offset = offset;
+        _recordDelegate = recordDelegate;
+        
+        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
+        _url = [NSURL fileURLWithPathComponents:pathComponents];
     }
     return self;
 }
@@ -36,26 +42,34 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     self.hasPlayedInLoop = YES;
     [self.recorder record];
+    
+    [self startRecordTimer];
 }
 
 -(void)stopRecording
 {
+    [self stopRecordTimer];
+    
     [self.recorder stop];
 }
 
 -(void)play
 {
-    self.hasPlayedInLoop = YES;
-    [self.player play];
+    if (!self.recorder.isRecording) {
+        self.hasPlayedInLoop = YES;
+        [self.player play];
+    }
 }
 
 -(void)stopPlayback
 {
+    [self stopRecording];
     [self.player stop];
 }
 
 -(void)pausePlayback
 {
+    [self stopRecording];
     [self.player pause];
 }
 
@@ -64,28 +78,13 @@ NSUInteger const DMTrackBitDepth = 16;
     return [_url lastPathComponent];
 }
 
-
-#pragma mark - Overrides
-
--(CGFloat)duration
-{
-    return self.player.duration;
-}
-
 -(BOOL)isRecording
 {
-    return self.recorder.recording;
+    return self.recorder.isRecording;
 }
 
--(BOOL)isPlaying
-{
-    return self.player.playing;
-}
 
--(BOOL)isBaseTrack
-{
-    return NO;
-}
+#pragma mark - Overrides
 
 -(AVAudioPlayer*)player
 {
@@ -118,13 +117,27 @@ NSUInteger const DMTrackBitDepth = 16;
     return _recorder;
 }
 
--(NSURL*)url
+
+#pragma mark - Record timer
+
+-(void)startRecordTimer
 {
-    if (!_url) {
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
-        _url = [NSURL fileURLWithPathComponents:pathComponents];
+    if (self.recordTimer) {
+        [self stopRecordTimer];
     }
-    return _url;
+    self.recordTimer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(recordTimerFired) userInfo:nil repeats:YES];
+}
+
+-(void)stopRecordTimer
+{
+    [self.recordTimer invalidate];
+    self.recordTimer = nil;
+    [self.recordDelegate updateRecordPosition:self.recorder.currentTime];
+}
+
+-(void)recordTimerFired
+{
+    [self.recordDelegate updateRecordPosition:self.recorder.currentTime];
 }
 
 

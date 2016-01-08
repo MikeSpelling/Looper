@@ -19,6 +19,8 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
+-(void)tearDown;
+
 -(NSArray*)tracks;
 
 -(BOOL)isEqualToLooper:(id)object;
