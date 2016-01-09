@@ -53,10 +53,12 @@ NSUInteger const DMTrackBitDepth = 16;
     [self.recorder stop];
 }
 
--(void)play
+-(void)playAtTime:(CGFloat)time
 {
     if (!self.recorder.isRecording) {
         self.hasPlayedInLoop = YES;
+        self.player.currentTime = time-self.offset;
+        NSLog(@"Play at %f", time-self.offset);
         [self.player play];
     }
 }

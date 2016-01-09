@@ -40,8 +40,8 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)commonInit
 {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     _baseTrack.baseTrackDelegate = self;
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
 }
 
 -(void)startRecording
@@ -53,10 +53,12 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
         
         self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition recordDelgate:self];
         [self.extraTracks addObject:self.recordingTrack];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     else {
         self.baseTrack = [[DMBaseTrack alloc] initWithBaseTrackDelegate:self recordDelegate:self];
         self.recordingTrack = self.baseTrack;
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
     }
     
     [self.recordingTrack startRecording];
@@ -67,8 +69,9 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 {
     [self.recordingTrack stopRecording];
     
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     if (self.recordingTrack == self.baseTrack) {
-        [self.recordingTrack play];
+        [self.baseTrack play];
     }
     
     self.recordingTrack = nil;
@@ -138,7 +141,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     
     for (DMTrack *track in self.extraTracks) {
         if (!track.hasPlayedInLoop && position >= track.offset) {
-            [track play];
+            [track playAtTime:position];
         }
     }
 }

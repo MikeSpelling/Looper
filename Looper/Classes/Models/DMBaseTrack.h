@@ -18,4 +18,6 @@
 -(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate recordDelegate:(id<DMTrackRecordDelegate>)recordDelegate;
 @property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
+-(void)play;
+
 @end

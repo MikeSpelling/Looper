@@ -31,7 +31,7 @@
 
 -(void)play
 {
-    [super play];
+    [super playAtTime:0];
     [self startTimer];
 }
 

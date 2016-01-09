@@ -22,7 +22,7 @@
 -(void)startRecording;
 -(void)stopRecording;
 
--(void)play;
+-(void)playAtTime:(CGFloat)time;
 -(void)stopPlayback;
 -(void)pausePlayback;
 
