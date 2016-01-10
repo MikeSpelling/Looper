@@ -8,18 +8,14 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
-#import "DMBaseTrack.h"
-#import "DMTrack.h"
+#import "DMRecorder.h"
 
 NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
 NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
 NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
-@interface DMLooper() <DMBaseTrackDelegate, DMTrackRecordDelegate>
-@property (nonatomic, strong) DMBaseTrack *baseTrack;
-@property (nonatomic, strong) NSMutableArray *extraTracks;
-
-@property (nonatomic, strong) DMTrack *recordingTrack;
+@interface DMLooper() <DMBaseTrackDelegate, DMRecorderDelegate>
+@property (nonatomic, strong) DMRecorder *recorder;
 
 @property (nonatomic, assign) CGFloat playbackPosition;
 @property (nonatomic, assign) CGFloat recordPosition;
@@ -41,6 +37,8 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)commonInit
 {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    
+    _recorder = [[DMRecorder alloc] initWithRecordDelgate:self];
     _baseTrack.baseTrackDelegate = self;
 }
 
@@ -51,27 +49,38 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
             [self play];
         }
         
-        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.playbackPosition recordDelgate:self];
-        [self.extraTracks addObject:self.recordingTrack];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        DMTrack *track = [self.recorder recordNewTrackAt:self.playbackPosition];
+        if (track) {
+            self.recordingTrack = track;
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+        }
     }
     else {
-        self.baseTrack = [[DMBaseTrack alloc] initWithBaseTrackDelegate:self recordDelegate:self];
-        self.recordingTrack = self.baseTrack;
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
+        DMBaseTrack *baseTrack = [self.recorder recordBaseTrackWithDelegate:self];
+        if (baseTrack) {
+            self.recordingTrack = baseTrack;
+            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
+        }
     }
     
-    [self.recordingTrack startRecording];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
+#warning TODO - Create new track at this point? Stop delay when starting new recording...
 -(void)stopRecording
 {
-    [self.recordingTrack stopRecording];
-    
+    [self.recorder stopRecording];
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    if (self.recordingTrack == self.baseTrack) {
+    
+    if (self.recordingTrack.isBaseTrack) {
+        self.baseTrack = (DMBaseTrack*)self.recordingTrack;
         [self.baseTrack play];
+    }
+    else {
+        [self.extraTracks addObject:self.recordingTrack];
+        if (self.recordingTrack.offset >= self.playbackPosition) {
+            [self.recordingTrack playAtTime:self.recordingTrack.offset - self.playbackPosition];
+        }
     }
     
     self.recordingTrack = nil;
@@ -81,12 +90,13 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)play
 {
     [self.baseTrack play];
+    [self scheduleExtraTracksForPlayback];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
 -(void)stopPlayback
 {
-    for (DMTrack *track in [self tracks]) {
+    for (DMTrack *track in [self recordedTracks]) {
         [track stopPlayback];
     }
     self.playbackPosition = 0;
@@ -94,34 +104,35 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
--(void)pausePlayback
-{
-    for (DMTrack *track in [self tracks]) {
-        [track pausePlayback];
-    }
-    
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
-}
-
 -(void)tearDown
 {
-    for (DMTrack *track in [self tracks]) {
+    for (DMTrack *track in [self allTracks]) {
         [track stopPlayback];
-        [track stopRecording];
     }
+    [self.recorder stopRecording];
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
--(NSArray*)tracks
+-(NSArray*)recordedTracks
 {
-    NSArray *allTracks = [NSArray new];
+    NSMutableArray *recordedTracks = [NSMutableArray new];
     if (self.baseTrack) {
-        allTracks = @[self.baseTrack];
+        [recordedTracks addObject:self.baseTrack];
         if (self.extraTracks) {
-            allTracks = [allTracks arrayByAddingObjectsFromArray:self.extraTracks];
+            [recordedTracks addObjectsFromArray:self.extraTracks];
         }
     }
+    return recordedTracks;
+}
+
+-(NSArray*)allTracks
+{
+    NSMutableArray *allTracks = [NSMutableArray new];
+    if (self.recordingTrack) {
+        [allTracks addObject:self.recordingTrack];
+    }
+    [allTracks addObjectsFromArray:[self recordedTracks]];
     return allTracks;
 }
 
@@ -130,24 +141,32 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)baseTrackDidLoop
 {
-    for (DMTrack *track in self.extraTracks) {
-        track.hasPlayedInLoop = NO;
-    }
+    [self scheduleExtraTracksForPlayback];
 }
 
 -(void)baseTrackUpdatePosition:(CGFloat)position
 {
     self.playbackPosition = position;
-    
+}
+
+
+#pragma mark - Internal
+
+-(void)scheduleExtraTracksForPlayback
+{
     for (DMTrack *track in self.extraTracks) {
-        if (!track.hasPlayedInLoop && position >= track.offset) {
-            [track playAtTime:position];
+        CGFloat timeToPlay = track.offset - self.playbackPosition;
+        if (track.duration > self.baseTrack.duration) {
+            if (!track.isPlaying) [track playAtTime:timeToPlay];
+        }
+        else {
+            [track playAtTime:timeToPlay];
         }
     }
 }
 
 
-#pragma mark - DMTrackRecordDelegate
+#pragma mark - DMRecorderDelegate
 
 -(void)updateRecordPosition:(CGFloat)position
 {

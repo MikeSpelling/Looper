@@ -12,25 +12,17 @@
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 
-CGFloat const DMTrackSampleRate = 44100;
-NSUInteger const DMTrackNumberOfChannels = 2;
-NSUInteger const DMTrackBitDepth = 16;
-
 @interface DMTrack()
-@property (nonatomic, strong) NSURL *url;
-@property (nonatomic, strong) AVAudioRecorder *recorder;
-@property (nonatomic, strong) NSTimer *recordTimer;
-@property (nonatomic, strong) id<DMTrackRecordDelegate>recordDelegate;
+@property (nonatomic, assign) BOOL playScheduled;
 @end
 
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(CGFloat)offset recordDelgate:(id<DMTrackRecordDelegate>)recordDelegate
+-(instancetype)initWithOffset:(CGFloat)offset
 {
     if (self = [super init]) {
         _offset = offset;
-        _recordDelegate = recordDelegate;
         
         NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
         _url = [NSURL fileURLWithPathComponents:pathComponents];
@@ -38,56 +30,32 @@ NSUInteger const DMTrackBitDepth = 16;
     return self;
 }
 
--(void)startRecording
-{
-    if (!self.isRecording) {
-        [self stopPlayback];
-        
-        if (!self.recorder) {
-            [self createRecorder];
-        }
-        [self.recorder record];
-        
-        self.hasPlayedInLoop = YES;
-        [self startRecordTimer];
-    }
-}
-
--(void)stopRecording
-{
-    if (self.isRecording) {
-        [self stopRecordTimer];
-        
-        [self.recorder stop];
-    }
-}
-
 -(void)playAtTime:(CGFloat)time
 {
-    if (!self.isRecording) {
-        self.hasPlayedInLoop = YES;
-        self.player.currentTime = time-self.offset;
-        
-        if (!self.player) {
-            [self createPlayer];
-        }
+    if (!self.player) {
+        [self createPlayer];
+    }
+    if (time <= 0) {
+        NSLog(@"%@ play %@", self.player, self);
         [self.player play];
+    } else {
+        NSLog(@"%@ play %@ in %f", self.player, self, time);
+        self.playScheduled = YES;
+        __weak typeof (self)weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            if (weakSelf.playScheduled) {
+                [weakSelf.player play];
+            }
+        });
     }
 }
 
 -(void)stopPlayback
 {
+    self.playScheduled = NO;
+    
     if (self.isPlaying) {
-        [self stopRecording];
         [self.player stop];
-    }
-}
-
--(void)pausePlayback
-{
-    if (self.isPlaying) {
-        [self stopRecording];
-        [self.player pause];
     }
 }
 
@@ -101,55 +69,24 @@ NSUInteger const DMTrackBitDepth = 16;
     return self.player.isPlaying;
 }
 
--(BOOL)isRecording
+-(CGFloat)duration
 {
-    return self.recorder.isRecording;
+    return self.player.duration;
+}
+
+-(BOOL)isBaseTrack
+{
+    return NO;
 }
 
 
 #pragma mark - Internal
 
--(void)createRecorder
-{
-    NSDictionary *settings = @{
-                               AVFormatIDKey          : @(kAudioFormatMPEG4AAC),
-                               AVSampleRateKey        : @(DMTrackSampleRate),
-                               AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
-                               AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
-                               };
-    
-    self.recorder = [[AVAudioRecorder alloc] initWithURL:self.url settings:settings error:nil];
-    self.recorder.meteringEnabled = YES;
-}
-
 -(void)createPlayer
 {
-    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-    self.player.numberOfLoops = 0;
-    self.player.volume = 1;
-}
-
-
-#pragma mark - Record timer
-
--(void)startRecordTimer
-{
-    if (self.recordTimer) {
-        [self stopRecordTimer];
-    }
-    self.recordTimer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(recordTimerFired) userInfo:nil repeats:YES];
-}
-
--(void)stopRecordTimer
-{
-    [self.recordTimer invalidate];
-    self.recordTimer = nil;
-    [self.recordDelegate updateRecordPosition:self.recorder.currentTime];
-}
-
--(void)recordTimerFired
-{
-    [self.recordDelegate updateRecordPosition:self.recorder.currentTime];
+    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
+    _player.numberOfLoops = 0;
+    _player.volume = 1;
 }
 
 

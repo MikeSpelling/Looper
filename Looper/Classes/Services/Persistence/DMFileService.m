@@ -42,7 +42,7 @@
     
     NSMutableArray *filesToKeep = [NSMutableArray new];
     for (DMLooper *looper in [[DMLooperService sharedInstance] loopers]) {
-        for (DMTrack *track in [looper tracks]) {
+        for (DMTrack *track in [looper recordedTracks]) {
             [filesToKeep addObject:track.filename];
         }
     }

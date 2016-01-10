@@ -89,7 +89,7 @@
     if (savedLooper) {
         return ![savedLooper isEqualToLooper:self.looper];
     }
-    return [self.looper tracks].count>0;
+    return [self.looper recordedTracks].count>0;
 }
 
 
@@ -102,15 +102,6 @@
     self.playButton.alpha = 0;
     self.pauseButton.alpha = 1;
     self.stopButton.alpha = 1;
-}
-
--(IBAction)pauseTapped
-{
-    [self.looper pausePlayback];
-    
-    self.playButton.alpha = 1;
-    self.pauseButton.alpha = 0;
-    self.stopButton.alpha = 0;
 }
 
 -(IBAction)stopTapped
@@ -166,7 +157,7 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [self.looper tracks].count;
+    return [self.looper allTracks].count;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath

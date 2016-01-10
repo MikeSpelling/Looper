@@ -16,9 +16,11 @@
 
 @implementation DMBaseTrack
 
--(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate recordDelegate:(id<DMTrackRecordDelegate>)recordDelegate
+@synthesize player = _player;
+
+-(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate
 {
-    if (self = [super initWithOffset:0 recordDelgate:recordDelegate]) {
+    if (self = [super initWithOffset:0]) {
         _baseTrackDelegate = baseTrackDelegate;
     }
     return self;
@@ -29,14 +31,13 @@
 
 -(void)play
 {
-    [super playAtTime:0];
+    if (!self.player) {
+        [self createPlayer];
+    }
+    NSLog(@"%@ play %@", self.player, self);
+    [self.player play];
+    
     [self startTimer];
-}
-
--(void)pausePlayback
-{
-    [super pausePlayback];
-    [self stopTimer];
 }
 
 -(void)stopPlayback
@@ -45,10 +46,19 @@
     [self stopTimer];
 }
 
+-(BOOL)isBaseTrack
+{
+    return YES;
+}
+
+
+#pragma mark - Internal
+
 -(void)createPlayer
 {
-    [super createPlayer];
-    self.player.numberOfLoops = -1;
+    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
+    _player.numberOfLoops = -1;
+    _player.volume = 1;
 }
 
 

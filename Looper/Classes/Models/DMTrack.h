@@ -10,36 +10,28 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-@protocol DMTrackRecordDelegate <NSObject>
--(void)updateRecordPosition:(CGFloat)position;
-@end
-
-
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(CGFloat)offset recordDelgate:(id<DMTrackRecordDelegate>)recordDelegate;
+-(instancetype)initWithOffset:(CGFloat)offset;
 
 -(NSString*)filename;
 
--(void)startRecording;
--(void)stopRecording;
-
 -(void)playAtTime:(CGFloat)time;
 -(void)stopPlayback;
--(void)pausePlayback;
 
--(BOOL)isRecording;
 -(BOOL)isPlaying;
+-(CGFloat)duration;
+
+-(BOOL)isBaseTrack;
 
 @property (nonatomic, assign, readonly) CGFloat offset;
-@property (nonatomic, assign) BOOL hasPlayedInLoop;
+@property (nonatomic, strong, readonly) NSURL *url;
 
 -(BOOL)isEqualToTrack:(id)object;
 
 
 #pragma mark - For Subclasses
 
-@property (nonatomic, strong) AVAudioPlayer *player;
--(void)createPlayer;
+@property (nonatomic, strong, readonly) AVAudioPlayer *player;
 
 @end

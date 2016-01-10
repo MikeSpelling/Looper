@@ -11,7 +11,6 @@
                 <outlet property="collectionView" destination="DGP-cG-pOf" id="YrY-av-9G9"/>
                 <outlet property="finishRecordingButton" destination="FPY-Wy-gds" id="7Z1-C1-vEw"/>
                 <outlet property="nextRecordingButton" destination="Jw2-4b-FMK" id="mZj-ni-eAJ"/>
-                <outlet property="pauseButton" destination="PPa-xd-aXY" id="nFf-MU-LWW"/>
                 <outlet property="playButton" destination="YVJ-hy-c1R" id="bW9-PM-sEo"/>
                 <outlet property="startRecordingButton" destination="L5P-W4-APh" id="YoS-Bt-cCa"/>
                 <outlet property="stopButton" destination="ITB-31-b5y" id="im2-rl-0NV"/>
@@ -32,34 +31,11 @@
                             <color key="textColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PPa-xd-aXY">
-                            <rect key="frame" x="440" y="0.0" width="64" height="64"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="64" id="o04-H3-2vo"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                            <state key="normal" title="Pause">
-                                <color key="titleColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
-                            </state>
-                            <connections>
-                                <action selector="pauseTapped" destination="-1" eventType="touchUpInside" id="Gc0-hI-0QY"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ITB-31-b5y">
-                            <rect key="frame" x="520" y="0.0" width="64" height="64"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="64" id="xx1-TF-AB9"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
-                            <state key="normal" title="Stop">
-                                <color key="titleColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
-                            </state>
-                            <connections>
-                                <action selector="stopTapped" destination="-1" eventType="touchUpInside" id="wQ7-fi-PLE"/>
-                            </connections>
-                        </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YVJ-hy-c1R">
                             <rect key="frame" x="440" y="0.0" width="144" height="64"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="144" id="elR-8v-Vqm"/>
+                            </constraints>
                             <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
                             <state key="normal" title="Play">
                                 <color key="titleColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
@@ -68,23 +44,30 @@
                                 <action selector="playTapped" destination="-1" eventType="touchUpInside" id="HDk-X9-AEb"/>
                             </connections>
                         </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ITB-31-b5y">
+                            <rect key="frame" x="440" y="0.0" width="144" height="64"/>
+                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="16"/>
+                            <state key="normal" title="Stop">
+                                <color key="titleColor" red="0.019607843137254902" green="0.019607843137254902" blue="0.019607843137254902" alpha="1" colorSpace="calibratedRGB"/>
+                            </state>
+                            <connections>
+                                <action selector="stopTapped" destination="-1" eventType="touchUpInside" id="wQ7-fi-PLE"/>
+                            </connections>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstItem="ITB-31-b5y" firstAttribute="leading" secondItem="PPa-xd-aXY" secondAttribute="trailing" constant="16" id="0cz-qK-PkU"/>
-                        <constraint firstItem="ITB-31-b5y" firstAttribute="top" secondItem="ag3-DS-b7Y" secondAttribute="top" id="F2E-mw-M39"/>
-                        <constraint firstItem="PPa-xd-aXY" firstAttribute="top" secondItem="ag3-DS-b7Y" secondAttribute="top" id="JPu-RF-6dq"/>
+                        <constraint firstItem="ITB-31-b5y" firstAttribute="bottom" secondItem="YVJ-hy-c1R" secondAttribute="bottom" id="M50-os-NDk"/>
+                        <constraint firstItem="ITB-31-b5y" firstAttribute="leading" secondItem="YVJ-hy-c1R" secondAttribute="leading" id="QHT-KH-5QQ"/>
                         <constraint firstItem="sA8-Dg-zrq" firstAttribute="leading" secondItem="ag3-DS-b7Y" secondAttribute="leading" constant="8" id="TWC-cF-f8G"/>
                         <constraint firstItem="YVJ-hy-c1R" firstAttribute="top" secondItem="ag3-DS-b7Y" secondAttribute="top" id="Tff-6K-S39"/>
-                        <constraint firstAttribute="bottom" secondItem="ITB-31-b5y" secondAttribute="bottom" id="UFJ-Mf-OlW"/>
+                        <constraint firstItem="ITB-31-b5y" firstAttribute="trailing" secondItem="YVJ-hy-c1R" secondAttribute="trailing" id="XH3-ob-e8I"/>
                         <constraint firstItem="sA8-Dg-zrq" firstAttribute="top" secondItem="ag3-DS-b7Y" secondAttribute="top" id="YvR-UK-NN9"/>
-                        <constraint firstAttribute="trailing" secondItem="ITB-31-b5y" secondAttribute="trailing" constant="16" id="cwW-PB-s5G"/>
-                        <constraint firstAttribute="bottom" secondItem="PPa-xd-aXY" secondAttribute="bottom" id="e7u-7B-3KS"/>
+                        <constraint firstItem="ITB-31-b5y" firstAttribute="top" secondItem="YVJ-hy-c1R" secondAttribute="top" id="fAQ-SM-iKv"/>
                         <constraint firstAttribute="height" constant="64" id="fqf-51-fdK"/>
+                        <constraint firstAttribute="trailing" secondItem="YVJ-hy-c1R" secondAttribute="trailing" constant="16" id="hne-J8-QhW"/>
                         <constraint firstAttribute="bottom" secondItem="YVJ-hy-c1R" secondAttribute="bottom" id="kwZ-7z-990"/>
                         <constraint firstAttribute="bottom" secondItem="sA8-Dg-zrq" secondAttribute="bottom" id="qHt-wO-oyT"/>
-                        <constraint firstItem="YVJ-hy-c1R" firstAttribute="trailing" secondItem="ITB-31-b5y" secondAttribute="trailing" id="tld-96-usK"/>
-                        <constraint firstItem="YVJ-hy-c1R" firstAttribute="leading" secondItem="PPa-xd-aXY" secondAttribute="leading" id="uEC-x2-axn"/>
                     </constraints>
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xL6-jH-rmB" userLabel="LoopButtonsView">

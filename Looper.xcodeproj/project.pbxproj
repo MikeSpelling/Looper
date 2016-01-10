@@ -19,6 +19,7 @@
 		9048DDC81C3DB090005D3C08 /* DMBaseTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDC71C3DB090005D3C08 /* DMBaseTrack.m */; };
 		9048DDCC1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */; };
 		9062E6F91C3EADE0001B4018 /* DMFileRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 9062E6F81C3EADE0001B4018 /* DMFileRepository.m */; };
+		906CA2711C42E77300622D7D /* DMRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 906CA2701C42E77300622D7D /* DMRecorder.m */; };
 		90C21F0F1C3D57BD00057999 /* UIView+DMAutoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEA1C3D57BD00057999 /* UIView+DMAutoLayout.m */; };
 		90C21F101C3D57BD00057999 /* UIView+DMNibLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEC1C3D57BD00057999 /* UIView+DMNibLoader.m */; };
 		90C21F111C3D57BD00057999 /* UIViewController+DMHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 90C21EEE1C3D57BD00057999 /* UIViewController+DMHelpers.m */; };
@@ -81,6 +82,8 @@
 		9048DDCB1C3DC9D5005D3C08 /* DMUserDefaultsRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMUserDefaultsRepository.m; sourceTree = "<group>"; };
 		9062E6F71C3EADE0001B4018 /* DMFileRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMFileRepository.h; sourceTree = "<group>"; };
 		9062E6F81C3EADE0001B4018 /* DMFileRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMFileRepository.m; sourceTree = "<group>"; };
+		906CA26F1C42E77300622D7D /* DMRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DMRecorder.h; sourceTree = "<group>"; };
+		906CA2701C42E77300622D7D /* DMRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DMRecorder.m; sourceTree = "<group>"; };
 		90C21EE91C3D57BD00057999 /* UIView+DMAutoLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DMAutoLayout.h"; sourceTree = "<group>"; };
 		90C21EEA1C3D57BD00057999 /* UIView+DMAutoLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+DMAutoLayout.m"; sourceTree = "<group>"; };
 		90C21EEB1C3D57BD00057999 /* UIView+DMNibLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+DMNibLoader.h"; sourceTree = "<group>"; };
@@ -338,6 +341,8 @@
 				90C21F2F1C3D589400057999 /* DMTrack.m */,
 				90C21F321C3D589400057999 /* DMLooper.h */,
 				90C21F331C3D589400057999 /* DMLooper.m */,
+				906CA26F1C42E77300622D7D /* DMRecorder.h */,
+				906CA2701C42E77300622D7D /* DMRecorder.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 				90C21F0F1C3D57BD00057999 /* UIView+DMAutoLayout.m in Sources */,
 				90001E9C1C3EBD1E0099615B /* DMFileService.m in Sources */,
 				900F10B21C3B2351003FF3B1 /* AppDelegate.m in Sources */,
+				906CA2711C42E77300622D7D /* DMRecorder.m in Sources */,
 				90C21F431C3D58A000057999 /* DMTracksViewController.m in Sources */,
 				9048DDC81C3DB090005D3C08 /* DMBaseTrack.m in Sources */,
 				90C21F421C3D58A000057999 /* DMNavigationController.m in Sources */,
