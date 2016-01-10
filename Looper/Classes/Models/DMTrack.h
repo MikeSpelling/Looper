@@ -19,6 +19,8 @@
 
 -(instancetype)initWithOffset:(CGFloat)offset recordDelgate:(id<DMTrackRecordDelegate>)recordDelegate;
 
+-(NSString*)filename;
+
 -(void)startRecording;
 -(void)stopRecording;
 
@@ -26,13 +28,18 @@
 -(void)stopPlayback;
 -(void)pausePlayback;
 
--(NSString*)filename;
 -(BOOL)isRecording;
+-(BOOL)isPlaying;
 
 @property (nonatomic, assign, readonly) CGFloat offset;
-@property (nonatomic, strong) AVAudioPlayer *player;
 @property (nonatomic, assign) BOOL hasPlayedInLoop;
 
 -(BOOL)isEqualToTrack:(id)object;
+
+
+#pragma mark - For Subclasses
+
+@property (nonatomic, strong) AVAudioPlayer *player;
+-(void)createPlayer;
 
 @end

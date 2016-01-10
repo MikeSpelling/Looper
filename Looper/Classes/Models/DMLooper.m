@@ -47,7 +47,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)startRecording
 {
     if (self.baseTrack) {
-        if (!self.baseTrack.player.isPlaying) {
+        if (!self.baseTrack.isPlaying) {
             [self play];
         }
         

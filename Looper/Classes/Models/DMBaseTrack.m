@@ -16,8 +16,6 @@
 
 @implementation DMBaseTrack
 
-@synthesize player = _player;
-
 -(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate recordDelegate:(id<DMTrackRecordDelegate>)recordDelegate
 {
     if (self = [super initWithOffset:0 recordDelgate:recordDelegate]) {
@@ -47,13 +45,10 @@
     [self stopTimer];
 }
 
--(AVAudioPlayer*)player
+-(void)createPlayer
 {
-    if (!_player) {
-        _player = [super player];
-        _player.numberOfLoops = -1;
-    }
-    return _player;
+    [super createPlayer];
+    self.player.numberOfLoops = -1;
 }
 
 

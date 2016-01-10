@@ -40,44 +40,65 @@ NSUInteger const DMTrackBitDepth = 16;
 
 -(void)startRecording
 {
-    self.hasPlayedInLoop = YES;
-    [self.recorder record];
-    
-    [self startRecordTimer];
+    if (!self.isRecording) {
+        [self stopPlayback];
+        
+        if (!self.recorder) {
+            [self createRecorder];
+        }
+        [self.recorder record];
+        
+        self.hasPlayedInLoop = YES;
+        [self startRecordTimer];
+    }
 }
 
 -(void)stopRecording
 {
-    [self stopRecordTimer];
-    
-    [self.recorder stop];
+    if (self.isRecording) {
+        [self stopRecordTimer];
+        
+        [self.recorder stop];
+    }
 }
 
 -(void)playAtTime:(CGFloat)time
 {
-    if (!self.recorder.isRecording) {
+    if (!self.isRecording) {
         self.hasPlayedInLoop = YES;
         self.player.currentTime = time-self.offset;
-        NSLog(@"Play at %f", time-self.offset);
+        
+        if (!self.player) {
+            [self createPlayer];
+        }
         [self.player play];
     }
 }
 
 -(void)stopPlayback
 {
-    [self stopRecording];
-    [self.player stop];
+    if (self.isPlaying) {
+        [self stopRecording];
+        [self.player stop];
+    }
 }
 
 -(void)pausePlayback
 {
-    [self stopRecording];
-    [self.player pause];
+    if (self.isPlaying) {
+        [self stopRecording];
+        [self.player pause];
+    }
 }
 
 -(NSString*)filename
 {
-    return [_url lastPathComponent];
+    return [self.url lastPathComponent];
+}
+    
+-(BOOL)isPlaying
+{
+    return self.player.isPlaying;
 }
 
 -(BOOL)isRecording
@@ -86,37 +107,26 @@ NSUInteger const DMTrackBitDepth = 16;
 }
 
 
-#pragma mark - Overrides
-
--(AVAudioPlayer*)player
-{
-    if (!_player) {
-        _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-        _player.numberOfLoops = 0;
-        _player.volume = 1;
-        [_player prepareToPlay];
-    }
-    return _player;
-}
-
-
 #pragma mark - Internal
 
--(AVAudioRecorder*)recorder
+-(void)createRecorder
 {
-    if (!_recorder) {
-        NSDictionary *settings = @{
-                                   AVFormatIDKey          : @(kAudioFormatMPEG4AAC),
-                                   AVSampleRateKey        : @(DMTrackSampleRate),
-                                   AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
-                                   AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
-                                   };
-        
-        _recorder = [[AVAudioRecorder alloc] initWithURL:self.url settings:settings error:nil];
-        _recorder.meteringEnabled = YES;
-        [_recorder prepareToRecord];
-    }
-    return _recorder;
+    NSDictionary *settings = @{
+                               AVFormatIDKey          : @(kAudioFormatMPEG4AAC),
+                               AVSampleRateKey        : @(DMTrackSampleRate),
+                               AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
+                               AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
+                               };
+    
+    self.recorder = [[AVAudioRecorder alloc] initWithURL:self.url settings:settings error:nil];
+    self.recorder.meteringEnabled = YES;
+}
+
+-(void)createPlayer
+{
+    self.player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
+    self.player.numberOfLoops = 0;
+    self.player.volume = 1;
 }
 
 
