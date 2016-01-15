@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "EZAudio.h"
 
 @interface DMTrack : NSObject <NSCoding>
 
@@ -32,6 +33,6 @@
 
 #pragma mark - For Subclasses
 
-@property (nonatomic, strong, readonly) AVAudioPlayer *player;
+@property (nonatomic, strong, readonly) EZAudioPlayer *player;
 
 @end

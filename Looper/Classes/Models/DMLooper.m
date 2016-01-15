@@ -9,6 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
 #import "DMRecorder.h"
+#import "EZAudio.h"
 
 NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
 NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";

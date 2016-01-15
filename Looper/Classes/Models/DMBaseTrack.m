@@ -56,8 +56,8 @@
 
 -(void)createPlayer
 {
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-    _player.numberOfLoops = -1;
+    _player = [[EZAudioPlayer alloc] initWithURL:self.url];
+    _player.shouldLoop = YES;
     _player.volume = 1;
 }
 

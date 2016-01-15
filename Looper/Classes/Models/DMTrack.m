@@ -55,7 +55,7 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
     self.playScheduled = NO;
     
     if (self.isPlaying) {
-        [self.player stop];
+        [self.player pause];
     }
 }
 
@@ -84,8 +84,8 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 
 -(void)createPlayer
 {
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-    _player.numberOfLoops = 0;
+    _player = [[EZAudioPlayer alloc] initWithURL:self.url];
+    _player.shouldLoop = NO;
     _player.volume = 1;
 }
 
