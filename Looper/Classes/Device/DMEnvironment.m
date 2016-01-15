@@ -24,7 +24,7 @@
 -(instancetype)init
 {
     if (self = [super init]) {
-        _baseFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        _baseFilePath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
         NSLog(@"%@", _baseFilePath);
     }
     return self;

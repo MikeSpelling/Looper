@@ -9,12 +9,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
 #import "DMRecorder.h"
+#import "DMAudioController.h"
 
 NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
 NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
 NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 @interface DMLooper() <DMBaseTrackDelegate, DMRecorderDelegate>
+@property (nonatomic, strong) DMAudioController *audioController;
 @property (nonatomic, strong) DMRecorder *recorder;
 
 @property (nonatomic, assign) CGFloat playbackPosition;
@@ -36,82 +38,86 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)commonInit
 {
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+//    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     
-    _recorder = [[DMRecorder alloc] initWithRecordDelgate:self];
-    _baseTrack.baseTrackDelegate = self;
+//    _recorder = [[DMRecorder alloc] initWithRecordDelgate:self];
+//    _baseTrack.baseTrackDelegate = self;
+    
+    _audioController = [[DMAudioController alloc] initWithTracks:nil];
 }
 
 -(void)startRecording
 {
-    if (self.baseTrack) {
-        if (!self.baseTrack.isPlaying) {
-            [self play];
-        }
-        
-        DMTrack *track = [self.recorder recordNewTrackAt:self.playbackPosition];
-        if (track) {
-            self.recordingTrack = track;
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-        }
-    }
-    else {
-        DMBaseTrack *baseTrack = [self.recorder recordBaseTrackWithDelegate:self];
-        if (baseTrack) {
-            self.recordingTrack = baseTrack;
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
-        }
-    }
-    
-    [[AVAudioSession sharedInstance] setActive:YES error:nil];
+    [self.audioController toggleRecord];
+//    if (self.baseTrack) {
+//        if (!self.baseTrack.isPlaying) {
+//            [self play];
+//        }
+//        
+//        DMTrack *track = [self.recorder recordNewTrackAt:self.playbackPosition];
+//        if (track) {
+//            self.recordingTrack = track;
+//            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
+//        }
+//    }
+//    else {
+//        DMBaseTrack *baseTrack = [self.recorder recordBaseTrackWithDelegate:self];
+//        if (baseTrack) {
+//            self.recordingTrack = baseTrack;
+//            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
+//        }
+//    }
+//    
+//    [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
-#warning TODO - Create new track at this point? Stop delay when starting new recording...
 -(void)stopRecording
 {
-    [self.recorder stopRecording];
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    
-    if (self.recordingTrack.isBaseTrack) {
-        self.baseTrack = (DMBaseTrack*)self.recordingTrack;
-        [self.baseTrack play];
-    }
-    else {
-        [self.extraTracks addObject:self.recordingTrack];
-        if (self.recordingTrack.offset >= self.playbackPosition) {
-            [self.recordingTrack playAtTime:self.recordingTrack.offset - self.playbackPosition];
-        }
-    }
-    
-    self.recordingTrack = nil;
-    self.recordPosition = 0;
+    [self.audioController toggleRecord];
+//    [self.recorder stopRecording];
+//    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+//    
+//    if (self.recordingTrack.isBaseTrack) {
+//        self.baseTrack = (DMBaseTrack*)self.recordingTrack;
+//        [self.baseTrack play];
+//    }
+//    else {
+//        [self.extraTracks addObject:self.recordingTrack];
+//        if (self.recordingTrack.offset >= self.playbackPosition) {
+//            [self.recordingTrack playAtTime:self.recordingTrack.offset - self.playbackPosition];
+//        }
+//    }
+//    
+//    self.recordingTrack = nil;
+//    self.recordPosition = 0;
 }
 
 -(void)play
 {
-    [self.baseTrack play];
-    [self scheduleExtraTracksForPlayback];
-    [[AVAudioSession sharedInstance] setActive:YES error:nil];
+//    [self.baseTrack play];
+//    [self scheduleExtraTracksForPlayback];
+//    [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
 -(void)stopPlayback
 {
-    for (DMTrack *track in [self recordedTracks]) {
-        [track stopPlayback];
-    }
-    self.playbackPosition = 0;
-    
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+//    for (DMTrack *track in [self recordedTracks]) {
+//        [track stopPlayback];
+//    }
+//    self.playbackPosition = 0;
+//    
+//    [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
 -(void)tearDown
 {
-    for (DMTrack *track in [self allTracks]) {
-        [track stopPlayback];
-    }
-    [self.recorder stopRecording];
-    
-    [[AVAudioSession sharedInstance] setActive:NO error:nil];
+    [self.audioController tearDown];
+//    for (DMTrack *track in [self allTracks]) {
+//        [track stopPlayback];
+//    }
+//    [self.recorder stopRecording];
+//    
+//    [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
 -(NSArray*)recordedTracks

@@ -19,13 +19,11 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(CGFloat)offset
+-(instancetype)initWithOffset:(CGFloat)offset filePath:(NSString*)filePath
 {
     if (self = [super init]) {
         _offset = offset;
-        
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
-        _url = [NSURL fileURLWithPathComponents:pathComponents];
+        _url = [NSURL fileURLWithPath:filePath];
     }
     return self;
 }

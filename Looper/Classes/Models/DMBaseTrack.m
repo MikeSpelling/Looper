@@ -20,9 +20,9 @@
 
 -(instancetype)initWithBaseTrackDelegate:(id<DMBaseTrackDelegate>)baseTrackDelegate
 {
-    if (self = [super initWithOffset:0]) {
+//    if (self = [super initWithOffset:0]) {
         _baseTrackDelegate = baseTrackDelegate;
-    }
+//    }
     return self;
 }
 

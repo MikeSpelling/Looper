@@ -52,10 +52,10 @@ NSUInteger const DMTrackBitDepth = 16;
 
 -(DMTrack*)recordNewTrackAt:(CGFloat)offset
 {
-    DMTrack *track = [[DMTrack alloc] initWithOffset:offset];
-    if ([self startRecordingTrack:track]) {
-        return track;
-    }
+//    DMTrack *track = [[DMTrack alloc] initWithOffset:offset];
+//    if ([self startRecordingTrack:track]) {
+//        return track;
+//    }
     return nil;
 }
 

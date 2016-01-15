@@ -12,7 +12,7 @@
 
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(CGFloat)offset;
+-(instancetype)initWithOffset:(CGFloat)offset filePath:(NSString*)filePath;
 
 -(NSString*)filename;
 
