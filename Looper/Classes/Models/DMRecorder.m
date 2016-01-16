@@ -150,6 +150,7 @@ NSUInteger const DMTrackBitDepth = 16;
             [self.recordDelegate baseTrackRecorded:self.recordingTrack];
         }
         else {
+            [self.recordDelegate trackRecorded:self.recordingTrack];
         }
         
         self.recordingTrack = nil;
