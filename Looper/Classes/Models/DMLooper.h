@@ -7,14 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DMBaseTrack.h"
 #import "DMTrack.h"
 
 @interface DMLooper : NSObject
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) DMTrack *recordingTrack;
-@property (nonatomic, strong) DMBaseTrack *baseTrack;
+@property (nonatomic, strong) DMTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
 -(void)startRecording;
@@ -26,6 +25,8 @@
 -(NSArray*)recordedTracks;
 -(NSArray*)allTracks;
 
+-(void)saveRecordings;
+-(void)deleteRecordings;
 -(void)tearDown;
 
 -(BOOL)isEqualToLooper:(id)object;

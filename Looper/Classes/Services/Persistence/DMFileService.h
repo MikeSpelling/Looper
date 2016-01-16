@@ -12,6 +12,7 @@
 
 +(DMFileService*)sharedInstance;
 
+-(void)deleteFileNamed:(NSString*)filename;
 -(void)deleteUnsavedFiles;
 
 @end

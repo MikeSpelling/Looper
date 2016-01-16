@@ -9,6 +9,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "DMLooper.h"
 #import "DMRecorder.h"
+#import "DMFileService.h"
 
 NSString *const DMLooperTitleCodingKey = @"DMLooperTitleCodingKey";
 NSString *const DMLooperBaseTrackCodingKey = @"DMLooperBaseTrackCodingKey";
@@ -16,6 +17,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 @interface DMLooper() <DMBaseTrackDelegate, DMRecorderDelegate>
 @property (nonatomic, strong) DMRecorder *recorder;
+@property (nonatomic, strong) DMFileService *fileService;
 
 @property (nonatomic, assign) CGFloat playbackPosition;
 @property (nonatomic, assign) CGFloat recordPosition;
@@ -27,6 +29,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(instancetype)init
 {
     if (self = [super init]) {
+        _fileService = [DMFileService sharedInstance];
         _extraTracks = [NSMutableArray new];
         
         [self commonInit];
@@ -44,37 +47,32 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)startRecording
 {
+    [self.recorder toggleRecordAt:self.baseTrack.currentTime];
+    self.recordingTrack = self.recorder.recordingTrack;
+    
     if (self.baseTrack) {
         if (!self.baseTrack.isPlaying) {
             [self play];
         }
-        
-        DMTrack *track = [self.recorder recordNewTrackAt:self.playbackPosition];
-        if (track) {
-            self.recordingTrack = track;
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-        }
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     else {
-        DMBaseTrack *baseTrack = [self.recorder recordBaseTrackWithDelegate:self];
-        if (baseTrack) {
-            self.recordingTrack = baseTrack;
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
-        }
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
     }
     
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
 
-#warning TODO - Create new track at this point? Stop delay when starting new recording...
 -(void)stopRecording
 {
-    [self.recorder stopRecording];
+    [self.recorder toggleRecordAt:self.baseTrack.currentTime];
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     
-    if (self.recordingTrack.isBaseTrack) {
-        self.baseTrack = (DMBaseTrack*)self.recordingTrack;
-        [self.baseTrack play];
+    if (!self.baseTrack) {
+        self.baseTrack = self.recordingTrack;
+        self.baseTrack.baseTrackDelegate = self;
+        self.baseTrack.isBaseTrack = YES;
+        [self.baseTrack playAtTime:0];
     }
     else {
         [self.extraTracks addObject:self.recordingTrack];
@@ -89,7 +87,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)play
 {
-    [self.baseTrack play];
+    [self.baseTrack playAtTime:0];
     [self scheduleExtraTracksForPlayback];
     [[AVAudioSession sharedInstance] setActive:YES error:nil];
 }
@@ -104,12 +102,24 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
+-(void)saveRecordings
+{
+    [self.recorder saveRecordings];
+}
+
+-(void)deleteRecordings
+{
+    for (DMTrack *track in [self allTracks]) {
+        [self.fileService deleteFileNamed:track.filename];
+    }
+}
+
 -(void)tearDown
 {
     for (DMTrack *track in [self allTracks]) {
         [track stopPlayback];
     }
-    [self.recorder stopRecording];
+    [self.recorder tearDown];
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }

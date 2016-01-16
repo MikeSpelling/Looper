@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "DMBaseTrack.h"
+#import "DMTrack.h"
 
 @protocol DMRecorderDelegate <NSObject>
 -(void)updateRecordPosition:(CGFloat)position;
@@ -17,9 +17,9 @@
 
 -(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate;
 
--(DMBaseTrack*)recordBaseTrackWithDelegate:(id<DMBaseTrackDelegate>)delegate;
--(DMTrack*)recordNewTrackAt:(CGFloat)offset;
--(void)stopRecording;
+-(void)toggleRecordAt:(CGFloat)offset;
+-(void)saveRecordings;
+-(void)tearDown;
 
 @property (nonatomic, strong, readonly) DMTrack *recordingTrack;
 

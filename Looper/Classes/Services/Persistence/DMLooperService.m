@@ -38,18 +38,19 @@
 
 -(void)saveLooper:(DMLooper*)looper
 {
-    if (looper.title) {        
+    if (looper.title) {
+        // Remove any saved Looper under the same name
         NSMutableArray *loopers = [[self loopers] mutableCopy];
-        
         for (DMLooper *savedLooper in loopers) {
             if ([savedLooper.title isEqualToString:looper.title]) {
                 [loopers removeObject:savedLooper];
             }
         }
+        
+        [looper saveRecordings];
         [loopers insertObject:looper atIndex:0];
         
         [self.userDefaultsRepository saveLoopers:loopers];
-        [[DMFileService sharedInstance] deleteUnsavedFiles];
     }
 }
 
@@ -58,10 +59,12 @@
     NSMutableArray *loopers = [[self loopers] mutableCopy];
     
     for (DMLooper *savedLooper in loopers) {
+        // Find the saved looper
         if ([savedLooper.title isEqualToString:looper.title]) {
+            [savedLooper deleteRecordings];
+            
             [loopers removeObject:savedLooper];
             [self.userDefaultsRepository saveLoopers:loopers];
-            [[DMFileService sharedInstance] deleteUnsavedFiles];
             return;
         }
     }

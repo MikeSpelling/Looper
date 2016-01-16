@@ -10,9 +10,16 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 
+@protocol DMBaseTrackDelegate <NSObject>
+-(void)baseTrackDidLoop;
+-(void)baseTrackUpdatePosition:(CGFloat)position;
+@end
+
+
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(CGFloat)offset;
+-(instancetype)initWithOffset:(CGFloat)offset url:(NSURL*)url;
+@property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
 -(NSString*)filename;
 
@@ -20,12 +27,12 @@
 -(void)stopPlayback;
 
 -(BOOL)isPlaying;
+-(NSTimeInterval)currentTime;
 -(CGFloat)duration;
-
--(BOOL)isBaseTrack;
 
 @property (nonatomic, assign, readonly) CGFloat offset;
 @property (nonatomic, strong, readonly) NSURL *url;
+@property (nonatomic, assign) BOOL isBaseTrack;
 
 -(BOOL)isEqualToTrack:(id)object;
 

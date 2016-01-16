@@ -54,4 +54,9 @@
     }
 }
 
+-(void)deleteFileNamed:(NSString*)filename
+{
+    [self.fileRepository deleteFileNamed:filename];
+}
+
 @end

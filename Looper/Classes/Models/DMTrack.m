@@ -7,25 +7,25 @@
 //
 
 #import "DMTrack.h"
-#import "DMEnvironment.h"
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
+NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 @interface DMTrack()
 @property (nonatomic, assign) BOOL playScheduled;
+@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, assign) CGFloat lastKnownPosition;
 @end
 
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(CGFloat)offset
+-(instancetype)initWithOffset:(CGFloat)offset url:(NSURL*)url
 {
     if (self = [super init]) {
         _offset = offset;
-        
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
-        _url = [NSURL fileURLWithPathComponents:pathComponents];
+        _url = url;
     }
     return self;
 }
@@ -38,6 +38,9 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
     if (time <= 0) {
         NSLog(@"%@ play %@", self.player, self);
         [self.player play];
+        if (self.isBaseTrack) {
+            [self startTimer];
+        }
     } else {
         NSLog(@"%@ play %@ in %f", self.player, self, time);
         self.playScheduled = YES;
@@ -56,6 +59,7 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
     
     if (self.isPlaying) {
         [self.player stop];
+        [self stopTimer];
     }
 }
 
@@ -69,14 +73,14 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
     return self.player.isPlaying;
 }
 
+-(NSTimeInterval)currentTime
+{
+    return self.player.currentTime;
+}
+
 -(CGFloat)duration
 {
     return self.player.duration;
-}
-
--(BOOL)isBaseTrack
-{
-    return NO;
 }
 
 
@@ -85,8 +89,36 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 -(void)createPlayer
 {
     _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-    _player.numberOfLoops = 0;
+    _player.numberOfLoops = self.isBaseTrack ? -1 : 0;
     _player.volume = 1;
+}
+
+
+#pragma mark - Timer
+
+-(void)startTimer
+{
+    if (self.timer) {
+        [self stopTimer];
+    }
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
+}
+
+-(void)stopTimer
+{
+    [self.timer invalidate];
+    self.timer = nil;
+}
+
+-(void)timerFired
+{
+    [self.baseTrackDelegate baseTrackUpdatePosition:self.player.currentTime];
+    
+    CGFloat currentPosition = self.player.currentTime;
+    if (currentPosition < self.lastKnownPosition) {
+        [self.baseTrackDelegate baseTrackDidLoop];
+    }
+    self.lastKnownPosition = currentPosition;
 }
 
 
@@ -96,6 +128,7 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeFloat:self.offset forKey:DMTrackOffsetCodingKey];
+    [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -103,6 +136,7 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeFloatForKey:DMTrackOffsetCodingKey];
+        _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
     }
     return self;
 }

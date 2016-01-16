@@ -8,6 +8,7 @@
 
 #import "DMRecorder.h"
 #import <AVFoundation/AVFoundation.h>
+#import "DMEnvironment.h"
 
 CGFloat const DMTrackSampleRate = 44100;
 NSUInteger const DMTrackNumberOfChannels = 2;
@@ -15,7 +16,12 @@ NSUInteger const DMTrackBitDepth = 16;
 
 @interface DMRecorder()
 @property (nonatomic, strong) AVAudioRecorder *recorder;
+@property (nonatomic, strong) AVAudioRecorder *preparedRecorder;
+@property (nonatomic, strong) NSMutableArray *recordersToDelete;
+
 @property (nonatomic, strong) NSDictionary *settings;
+
+@property (nonatomic, strong) DMTrack *recordingTrack;
 
 @property (nonatomic, weak) id<DMRecorderDelegate>recordDelegate;
 
@@ -28,6 +34,7 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     if (self = [super init]) {
         _recordDelegate = recordDelegate;
+        _recordersToDelete = [NSMutableArray new];
         
         _settings = @{
                      AVFormatIDKey          : @(kAudioFormatMPEG4AAC),
@@ -35,54 +42,49 @@ NSUInteger const DMTrackBitDepth = 16;
                      AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
                      AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
                      };
-        
-        
+        [self createNextRecorder];
     }
     return self;
 }
 
--(DMBaseTrack*)recordBaseTrackWithDelegate:(id<DMBaseTrackDelegate>)delegate
+-(void)toggleRecordAt:(CGFloat)offset
 {
-    DMBaseTrack *track = [[DMBaseTrack alloc] initWithBaseTrackDelegate:delegate];
-    if ([self startRecordingTrack:track]) {
-        return track;
+    if (self.recordingTrack) {
+        [self stopRecording];
+    } else {
+        [self startRecordingAt:offset];
     }
-    return nil;
 }
 
--(DMTrack*)recordNewTrackAt:(CGFloat)offset
+-(void)createNextRecorder
 {
-    DMTrack *track = [[DMTrack alloc] initWithOffset:offset];
-    if ([self startRecordingTrack:track]) {
-        return track;
-    }
-    return nil;
+    __weak typeof (self)weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
+        weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
+        weakSelf.preparedRecorder.meteringEnabled = YES;
+        [weakSelf.preparedRecorder prepareToRecord];
+        [weakSelf.recordersToDelete addObject:weakSelf.preparedRecorder];
+    });
 }
 
--(BOOL)startRecordingTrack:(DMTrack*)track
+-(void)startRecordingAt:(CGFloat)offset
 {
-    NSError *error = nil;
-    self.recorder = [[AVAudioRecorder alloc] initWithURL:track.url settings:self.settings error:&error];
-    if (self.recorder && !error) {
-        self.recorder.meteringEnabled = YES;
-        
-        if (self.isRecording) {
-            [self.recorder stop];
-        }
-        
-        _recordingTrack = track;
+    if (self.preparedRecorder) {
+        self.recorder = self.preparedRecorder;
+        self.preparedRecorder = nil;
         [self.recorder record];
+        self.recordingTrack = [[DMTrack alloc] initWithOffset:offset url:self.recorder.url];
         [self startRecordTimer];
-        
-        return YES;
+        [self createNextRecorder];
     }
-    return NO;
 }
 
 -(void)stopRecording
 {
     [self.recorder stop];
     [self stopRecordTimer];
+    self.recordingTrack = nil;
 }
 
 -(BOOL)isRecording
@@ -90,6 +92,25 @@ NSUInteger const DMTrackBitDepth = 16;
     return self.recorder.isRecording;
 }
 
+-(void)saveRecordings
+{
+    self.recordersToDelete = [NSMutableArray new];
+    if (self.preparedRecorder) {
+        [self.recordersToDelete addObject:self.preparedRecorder];
+    }
+}
+
+-(void)tearDown
+{
+    [self stopRecording];
+    self.recorder = nil;
+    self.preparedRecorder = nil;
+    self.recordDelegate = nil;
+    
+    for (AVAudioRecorder *recorder in self.recordersToDelete) {
+        [recorder deleteRecording];
+    }
+}
 
 #pragma mark - Record timer
 
