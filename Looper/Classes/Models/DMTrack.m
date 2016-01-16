@@ -44,10 +44,12 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     } else {
         NSLog(@"%@ play %@ in %f", self.player, self, time);
         self.playScheduled = YES;
+        [self.player prepareToPlay];
         __weak typeof (self)weakSelf = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             if (weakSelf.playScheduled) {
                 [weakSelf.player play];
+                weakSelf.playScheduled = NO;
             }
         });
     }
