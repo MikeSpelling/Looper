@@ -10,16 +10,22 @@
 #import "DMTrack.h"
 
 @protocol DMRecorderDelegate <NSObject>
--(void)updateRecordPosition:(CGFloat)position;
+-(void)updateRecordPosition:(NSTimeInterval)position;
+-(void)baseTrackRecorded:(DMTrack*)track;
+-(void)trackRecorded:(DMTrack*)track;
 @end
 
 @interface DMRecorder : NSObject
 
 -(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate;
 
--(void)toggleRecordAt:(CGFloat)offset;
+-(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate;
+-(void)startRecordingWithOffset:(NSTimeInterval)offset;
+-(void)stopRecording;
 -(void)saveRecordings;
 -(void)tearDown;
+
+-(NSTimeInterval)recordPosition;
 
 @property (nonatomic, strong, readonly) DMTrack *recordingTrack;
 

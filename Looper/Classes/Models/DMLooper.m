@@ -18,9 +18,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 @interface DMLooper() <DMBaseTrackDelegate, DMRecorderDelegate>
 @property (nonatomic, strong) DMRecorder *recorder;
 @property (nonatomic, strong) DMFileService *fileService;
-
-@property (nonatomic, assign) CGFloat playbackPosition;
-@property (nonatomic, assign) CGFloat recordPosition;
 @end
 
 
@@ -47,16 +44,15 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)startRecording
 {
-    [self.recorder toggleRecordAt:self.baseTrack.currentTime];
-    self.recordingTrack = self.recorder.recordingTrack;
-    
     if (self.baseTrack) {
         if (!self.baseTrack.isPlaying) {
             [self play];
         }
+        [self.recorder startRecordingWithOffset:self.baseTrack.currentTime];
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     else {
+        [self.recorder recordBaseTrack:self];
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryRecord error:nil];
     }
     
@@ -65,24 +61,8 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)stopRecording
 {
-    [self.recorder toggleRecordAt:self.baseTrack.currentTime];
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    
-    if (!self.baseTrack) {
-        self.baseTrack = self.recordingTrack;
-        self.baseTrack.baseTrackDelegate = self;
-        self.baseTrack.isBaseTrack = YES;
-        [self.baseTrack playAtTime:0];
-    }
-    else {
-        [self.extraTracks addObject:self.recordingTrack];
-        if (self.recordingTrack.offset >= self.playbackPosition) {
-            [self.recordingTrack playAtTime:self.recordingTrack.offset - self.playbackPosition];
-        }
-    }
-    
-    self.recordingTrack = nil;
-    self.recordPosition = 0;
+    [self.recorder stopRecording];
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
 -(void)play
@@ -97,7 +77,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     for (DMTrack *track in [self recordedTracks]) {
         [track stopPlayback];
     }
-    self.playbackPosition = 0;
     
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
@@ -124,6 +103,51 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [[AVAudioSession sharedInstance] setActive:NO error:nil];
 }
 
+
+#pragma mark - DMRecorderDelegate
+
+-(void)updateRecordPosition:(NSTimeInterval)position
+{
+    // Update UI
+}
+
+-(void)baseTrackRecorded:(DMTrack*)track
+{
+    self.baseTrack = track;
+    [self.baseTrack playAtTime:0];
+}
+
+-(void)trackRecorded:(DMTrack*)track
+{
+    [self.extraTracks addObject:track];
+    if (track.offset >= self.baseTrack.currentTime) {
+        [track playAtTime:track.offset - self.baseTrack.currentTime];
+    }
+}
+
+
+#pragma mark - DMBaseTrackDelegate
+
+-(void)baseTrackDidLoop
+{
+    [self scheduleExtraTracksForPlayback];
+}
+
+-(void)baseTrackUpdatePosition:(NSTimeInterval)position
+{
+    // Update UI
+}
+
+
+#pragma mark - Internal
+
+-(void)scheduleExtraTracksForPlayback
+{
+    for (DMTrack *track in self.extraTracks) {
+        [track playAtTime:track.offset - self.baseTrack.currentTime];
+    }
+}
+
 -(NSArray*)recordedTracks
 {
     NSMutableArray *recordedTracks = [NSMutableArray new];
@@ -139,48 +163,11 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(NSArray*)allTracks
 {
     NSMutableArray *allTracks = [NSMutableArray new];
-    if (self.recordingTrack) {
-        [allTracks addObject:self.recordingTrack];
+    if (self.recorder.recordingTrack) {
+        [allTracks addObject:self.recorder.recordingTrack];
     }
     [allTracks addObjectsFromArray:[self recordedTracks]];
     return allTracks;
-}
-
-
-#pragma mark - DMBaseTrackDelegate
-
--(void)baseTrackDidLoop
-{
-    [self scheduleExtraTracksForPlayback];
-}
-
--(void)baseTrackUpdatePosition:(CGFloat)position
-{
-    self.playbackPosition = position;
-}
-
-
-#pragma mark - Internal
-
--(void)scheduleExtraTracksForPlayback
-{
-    for (DMTrack *track in self.extraTracks) {
-        CGFloat timeToPlay = track.offset - self.playbackPosition;
-        if (track.duration > self.baseTrack.duration) {
-            if (!track.isPlaying) [track playAtTime:timeToPlay];
-        }
-        else {
-            [track playAtTime:timeToPlay];
-        }
-    }
-}
-
-
-#pragma mark - DMRecorderDelegate
-
--(void)updateRecordPosition:(CGFloat)position
-{
-    self.recordPosition = position;
 }
 
 

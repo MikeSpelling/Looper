@@ -12,33 +12,30 @@
 
 @protocol DMBaseTrackDelegate <NSObject>
 -(void)baseTrackDidLoop;
--(void)baseTrackUpdatePosition:(CGFloat)position;
+-(void)baseTrackUpdatePosition:(NSTimeInterval)position;
 @end
 
 
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(CGFloat)offset url:(NSURL*)url;
+-(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url;
+-(instancetype)initAsBaseTrackWithUrl:(NSURL*)url delegate:(id<DMBaseTrackDelegate>)delegate;
 @property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
 -(NSString*)filename;
 
--(void)playAtTime:(CGFloat)time;
+-(void)playAtTime:(NSTimeInterval)time;
 -(void)stopPlayback;
 
 -(BOOL)isPlaying;
 -(NSTimeInterval)currentTime;
 -(CGFloat)duration;
 
-@property (nonatomic, assign, readonly) CGFloat offset;
+@property (nonatomic, assign, readonly) NSTimeInterval offset;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign) BOOL isBaseTrack;
+@property (nonatomic, assign) BOOL shouldLoop;
 
 -(BOOL)isEqualToTrack:(id)object;
-
-
-#pragma mark - For Subclasses
-
-@property (nonatomic, strong, readonly) AVAudioPlayer *player;
 
 @end

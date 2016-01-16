@@ -13,15 +13,17 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 @interface DMTrack()
-@property (nonatomic, assign) BOOL playScheduled;
 @property (nonatomic, strong) NSTimer *timer;
-@property (nonatomic, assign) CGFloat lastKnownPosition;
+@property (nonatomic, assign) NSTimeInterval lastKnownPosition;
+
+@property (nonatomic, strong) AVAudioPlayer *player1;
+@property (nonatomic, strong) AVAudioPlayer *player2;
 @end
 
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(CGFloat)offset url:(NSURL*)url
+-(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url
 {
     if (self = [super init]) {
         _offset = offset;
@@ -30,39 +32,42 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     return self;
 }
 
--(void)playAtTime:(CGFloat)time
+-(instancetype)initAsBaseTrackWithUrl:(NSURL*)url delegate:(id<DMBaseTrackDelegate>)delegate
 {
-    if (!self.player) {
-        [self createPlayer];
+    if (self = [super init]) {
+        _offset = 0;
+        _url = url;
+        _isBaseTrack = YES;
+        _baseTrackDelegate = delegate;
     }
+    return self;
+}
+
+-(void)playAtTime:(NSTimeInterval)time
+{
+    // Lazy load the players when we want to play - ensures we should have required metadata
+    if (!self.player1) {
+        [self createPlayers];
+    }
+    
+    // Get a player that is ready to play
+    AVAudioPlayer *player = self.freePlayer;
+    
     if (time <= 0) {
-        NSLog(@"%@ play %@", self.player, self);
-        [self.player play];
+        [player play];
         if (self.isBaseTrack) {
             [self startTimer];
         }
-    } else {
-        NSLog(@"%@ play %@ in %f", self.player, self, time);
-        self.playScheduled = YES;
-        [self.player prepareToPlay];
-        __weak typeof (self)weakSelf = self;
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(time * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-            if (weakSelf.playScheduled) {
-                [weakSelf.player play];
-                weakSelf.playScheduled = NO;
-            }
-        });
+    }
+    else {
+        [player playAtTime:player.deviceCurrentTime+time];
     }
 }
 
 -(void)stopPlayback
 {
-    self.playScheduled = NO;
-    
-    if (self.isPlaying) {
-        [self.player stop];
-        [self stopTimer];
-    }
+    [self.currentlyPlayingPlayer stop];
+    [self stopTimer];
 }
 
 -(NSString*)filename
@@ -72,27 +77,58 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     
 -(BOOL)isPlaying
 {
-    return self.player.isPlaying;
+    return self.currentlyPlayingPlayer != nil;
 }
 
 -(NSTimeInterval)currentTime
 {
-    return self.player.currentTime;
+    return self.currentlyPlayingPlayer.currentTime;
 }
 
--(CGFloat)duration
+-(NSTimeInterval)duration
 {
-    return self.player.duration;
+    return self.player1.duration;
 }
 
 
 #pragma mark - Internal
 
--(void)createPlayer
+-(void)createPlayers
 {
-    _player = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
-    _player.numberOfLoops = self.isBaseTrack ? -1 : 0;
-    _player.volume = 1;
+    self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
+    self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
+    self.player1.volume = 1;
+    
+    // May need to overlap if not a base track, needs second player
+    if (!self.isBaseTrack) {
+        self.player2 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
+        self.player2.numberOfLoops = 0;
+        self.player2.volume = 1;
+    }
+}
+
+-(AVAudioPlayer*)currentlyPlayingPlayer
+{
+    if (self.player1.isPlaying) {
+        return self.player1;
+    }
+    else if (self.player2.isPlaying) {
+        return self.player2;
+    }
+    return nil;
+}
+
+-(AVAudioPlayer*)freePlayer
+{
+    if (!self.player1.isPlaying) {
+        [self.player1 prepareToPlay];
+        return self.player1;
+    }
+    else if (!self.player2.isPlaying) {
+        [self.player2 prepareToPlay];
+        return self.player2;
+    }
+    return nil;
 }
 
 
@@ -114,9 +150,9 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 -(void)timerFired
 {
-    [self.baseTrackDelegate baseTrackUpdatePosition:self.player.currentTime];
+    [self.baseTrackDelegate baseTrackUpdatePosition:self.currentlyPlayingPlayer.currentTime];
     
-    CGFloat currentPosition = self.player.currentTime;
+    NSTimeInterval currentPosition = self.currentlyPlayingPlayer.currentTime;
     if (currentPosition < self.lastKnownPosition) {
         [self.baseTrackDelegate baseTrackDidLoop];
     }
@@ -129,7 +165,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 -(void)encodeWithCoder:(NSCoder *)encoder
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
-    [encoder encodeFloat:self.offset forKey:DMTrackOffsetCodingKey];
+    [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
     [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
 }
 
@@ -137,7 +173,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 {
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
-        _offset = [decoder decodeFloatForKey:DMTrackOffsetCodingKey];
+        _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
         _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
     }
     return self;

@@ -12,7 +12,6 @@
 @interface DMLooper : NSObject
 
 @property (nonatomic, strong) NSString *title;
-@property (nonatomic, strong) DMTrack *recordingTrack;
 @property (nonatomic, strong) DMTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
