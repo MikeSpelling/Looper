@@ -48,7 +48,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
         if (!self.baseTrack.isPlaying) {
             [self play];
         }
-        [self.recorder startRecordingWithOffset:self.baseTrack.currentTime];
+        [self.recorder startRecordingNextTrack];
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     }
     else {
@@ -62,7 +62,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)stopRecording
 {
     [self.recorder stopRecording];
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
 -(void)play

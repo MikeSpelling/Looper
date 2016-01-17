@@ -20,7 +20,7 @@
 -(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate;
 
 -(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate;
--(void)startRecordingWithOffset:(NSTimeInterval)offset;
+-(void)startRecordingNextTrack;
 -(void)stopRecording;
 -(void)saveRecordings;
 -(void)tearDown;

@@ -54,6 +54,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     AVAudioPlayer *player = self.freePlayer;
     
     if (time <= 0) {
+        player.currentTime = -time;
         [player play];
         if (self.isBaseTrack) {
             [self startTimer];
@@ -133,6 +134,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 
 #pragma mark - Timer
+#warning - Change timer to more accurate GCD on background thread (seperate class?) once we know its looped - inform delegate on main thread...
 
 -(void)startTimer
 {

@@ -22,12 +22,12 @@ NSUInteger const DMTrackBitDepth = 16;
 @property (nonatomic, strong) NSDictionary *settings;
 
 @property (nonatomic, strong) DMTrack *recordingTrack;
+@property (nonatomic, strong) DMTrack *baseTrack;
 
 @property (nonatomic, weak) id<DMRecorderDelegate>recordDelegate;
 
 @property (nonatomic, strong) NSTimer *recordTimer;
 
-@property (nonatomic, assign) NSTimeInterval baseDuration;
 @property (nonatomic, assign) BOOL stopping;
 @end
 
@@ -41,7 +41,7 @@ NSUInteger const DMTrackBitDepth = 16;
         _recordersToDelete = [NSMutableArray new];
         
         _settings = @{
-                     AVFormatIDKey          : @(kAudioFormatMPEG4AAC),
+                     AVFormatIDKey          : @(kAudioFormatAppleLossless),
                      AVSampleRateKey        : @(DMTrackSampleRate),
                      AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
                      AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
@@ -57,18 +57,18 @@ NSUInteger const DMTrackBitDepth = 16;
     self.recordingTrack = [[DMTrack alloc] initAsBaseTrackWithUrl:self.recorder.url delegate:delegate];
 }
 
--(void)startRecordingWithOffset:(NSTimeInterval)offset
+-(void)startRecordingNextTrack
 {
     [self startRecording];
-    self.recordingTrack = [[DMTrack alloc] initWithOffset:offset url:self.recorder.url];
+    self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url];
 }
 
 -(void)startRecording
 {
     self.recorder = self.preparedRecorder;
     self.preparedRecorder = nil;
-    if (self.baseDuration) {
-        [self.recorder recordForDuration:self.baseDuration];
+    if (self.baseTrack) {
+        [self.recorder recordForDuration:self.baseTrack.duration];
     } else {
         [self.recorder record];
     }
@@ -83,8 +83,8 @@ NSUInteger const DMTrackBitDepth = 16;
     self.stopping = YES;
     __weak typeof (self)weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (weakSelf.recordingTrack.isBaseTrack) {
-            weakSelf.baseDuration = weakSelf.recorder.currentTime;
+        if (!weakSelf.baseTrack) {
+            weakSelf.baseTrack = weakSelf.recordingTrack;
         }
         
         [weakSelf.recorder stop];
@@ -159,7 +159,7 @@ NSUInteger const DMTrackBitDepth = 16;
     else
     {
         [self.recordDelegate trackRecorded:self.recordingTrack];
-        [self startRecordingWithOffset:self.recordingTrack.offset];
+        [self startRecordingNextTrack];
     }
 }
 
@@ -170,7 +170,7 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     __weak typeof (self)weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.m4a", [[NSDate date] timeIntervalSince1970]]];
+        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.caf", [[NSDate date] timeIntervalSince1970]]];
         weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
         weakSelf.preparedRecorder.meteringEnabled = YES;
         weakSelf.preparedRecorder.delegate = weakSelf;
