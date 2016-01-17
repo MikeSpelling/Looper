@@ -13,8 +13,8 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 @interface DMTrack()
-@property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, assign) NSTimeInterval lastKnownPosition;
+@property (nonatomic, strong) dispatch_source_t timer;
 
 @property (nonatomic, strong) AVAudioPlayer *player1;
 @property (nonatomic, strong) AVAudioPlayer *player2;
@@ -52,16 +52,16 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     
     // Get a player that is ready to play
     AVAudioPlayer *player = self.freePlayer;
-    
     if (time <= 0) {
         player.currentTime = -time;
         [player play];
-        if (self.isBaseTrack) {
-            [self startTimer];
-        }
     }
     else {
         [player playAtTime:player.deviceCurrentTime+time];
+    }
+    
+    if (self.isBaseTrack) {
+        [self startTimer];
     }
 }
 
@@ -89,6 +89,11 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 -(NSTimeInterval)duration
 {
     return self.player1.duration;
+}
+
+-(void)tearDown
+{
+    [self stopPlayback];
 }
 
 
@@ -134,30 +139,36 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 
 #pragma mark - Timer
-#warning - Change timer to more accurate GCD on background thread (seperate class?) once we know its looped - inform delegate on main thread...
 
 -(void)startTimer
 {
-    if (self.timer) {
-        [self stopTimer];
+    if (!self.timer) {
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, DISPATCH_TIMER_STRICT, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
+        
+        __weak typeof (self)weakSelf = self;
+        dispatch_source_set_event_handler(self.timer, ^{
+            [weakSelf timerFired];
+        });
+        
+        dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC), (int64_t)(0.01 * NSEC_PER_SEC));
+        dispatch_resume(self.timer);
     }
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
 }
 
 -(void)stopTimer
 {
-    [self.timer invalidate];
     self.timer = nil;
 }
 
 -(void)timerFired
 {
-    [self.baseTrackDelegate baseTrackUpdatePosition:self.currentlyPlayingPlayer.currentTime];
-    
-    NSTimeInterval currentPosition = self.currentlyPlayingPlayer.currentTime;
+    AVAudioPlayer *player = self.currentlyPlayingPlayer;
+    NSTimeInterval currentPosition = player.currentTime;
     if (currentPosition < self.lastKnownPosition) {
+        NSLog(@"%@ Looped %f", player, currentPosition);
         [self.baseTrackDelegate baseTrackDidLoop];
     }
+    NSLog(@"%f %f", player.currentTime, player.deviceCurrentTime);
     self.lastKnownPosition = currentPosition;
 }
 

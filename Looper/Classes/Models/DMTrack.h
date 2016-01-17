@@ -22,6 +22,8 @@
 -(instancetype)initAsBaseTrackWithUrl:(NSURL*)url delegate:(id<DMBaseTrackDelegate>)delegate;
 @property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
+-(void)tearDown;
+
 -(NSString*)filename;
 
 -(void)playAtTime:(NSTimeInterval)time;

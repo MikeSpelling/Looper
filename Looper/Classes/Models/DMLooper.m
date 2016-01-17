@@ -96,7 +96,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)tearDown
 {
     for (DMTrack *track in [self allTracks]) {
-        [track stopPlayback];
+        [track tearDown];
     }
     [self.recorder tearDown];
     
