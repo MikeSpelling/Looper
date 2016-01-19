@@ -9,10 +9,8 @@
 #import "DMLooperViewController.h"
 #import "DMTracksViewController.h"
 #import "UIViewController+DMHelpers.h"
-#import "DMFileService.h"
 
 @interface DMLooperViewController() <UITextFieldDelegate>
-@property (nonatomic, strong) DMFileService *fileService;
 @property (nonatomic, strong) DMLooper *looper;
 
 @property (nonatomic, strong) DMTracksViewController *tracksViewController;
@@ -29,7 +27,6 @@
 -(instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
-        _fileService = [DMFileService sharedInstance];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide) name:UIKeyboardWillHideNotification object:nil];
     }
     return self;
@@ -43,7 +40,6 @@
 
 -(void)dealloc
 {
-    [self.fileService deleteUnsavedFiles];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -51,6 +47,7 @@
 {
     [super viewDidLoad];
     
+    [self.looper setupForRecording];
     self.tracksViewController = [[DMTracksViewController alloc] initWithLooper:self.looper];
     [self dm_addExpandingChildViewController:self.tracksViewController toView:self.containerView];
     

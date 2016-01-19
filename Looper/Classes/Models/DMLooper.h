@@ -9,12 +9,19 @@
 #import <Foundation/Foundation.h>
 #import "DMTrack.h"
 
+@protocol DMLooperDelegate <NSObject>
+-(void)tracksChanged;
+@end
+
 @interface DMLooper : NSObject
+
+@property (nonatomic, weak) id<DMLooperDelegate>delegate;
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) DMTrack *baseTrack;
 @property (nonatomic, strong) NSMutableArray *extraTracks;
 
+-(void)setupForRecording;
 -(void)startRecording;
 -(void)stopRecording;
 

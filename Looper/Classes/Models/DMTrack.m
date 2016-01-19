@@ -13,8 +13,8 @@ NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 @interface DMTrack()
-@property (nonatomic, assign) NSTimeInterval lastKnownPosition;
 @property (nonatomic, strong) dispatch_source_t timer;
+@property (nonatomic, assign) NSTimeInterval lastKnownPosition;
 
 @property (nonatomic, strong) AVAudioPlayer *player1;
 @property (nonatomic, strong) AVAudioPlayer *player2;
@@ -67,15 +67,11 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 
 -(void)stopPlayback
 {
-    [self.currentlyPlayingPlayer stop];
+    [self.player1 stop];
+    [self.player2 stop];
     [self stopTimer];
 }
 
--(NSString*)filename
-{
-    return [self.url lastPathComponent];
-}
-    
 -(BOOL)isPlaying
 {
     return self.currentlyPlayingPlayer != nil;
@@ -89,11 +85,6 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 -(NSTimeInterval)duration
 {
     return self.player1.duration;
-}
-
--(void)tearDown
-{
-    [self stopPlayback];
 }
 
 
@@ -150,7 +141,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
             [weakSelf timerFired];
         });
         
-        dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC), (int64_t)(0.01 * NSEC_PER_SEC));
+        dispatch_source_set_timer(self.timer, DISPATCH_TIME_NOW, (int64_t)(0.001 * NSEC_PER_SEC), (int64_t)(0.0001 * NSEC_PER_SEC));
         dispatch_resume(self.timer);
     }
 }
@@ -165,10 +156,10 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     AVAudioPlayer *player = self.currentlyPlayingPlayer;
     NSTimeInterval currentPosition = player.currentTime;
     if (currentPosition < self.lastKnownPosition) {
-        NSLog(@"%@ Looped %f", player, currentPosition);
+        NSLog(@"Looped %f/%f", currentPosition, player.duration);
         [self.baseTrackDelegate baseTrackDidLoop];
     }
-    NSLog(@"%f %f", player.currentTime, player.deviceCurrentTime);
+    //    NSLog(@"%f", player.currentTime);
     self.lastKnownPosition = currentPosition;
 }
 
@@ -214,6 +205,10 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     
     BOOL urlsSame = (!track.url && !self.url) || [track.url.absoluteString isEqualToString:self.url.absoluteString];
     if (!urlsSame) {
+        return NO;
+    }
+    
+    if (track.isBaseTrack != self.isBaseTrack) {
         return NO;
     }
     

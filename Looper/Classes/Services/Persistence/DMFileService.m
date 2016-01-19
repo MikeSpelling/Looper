@@ -7,13 +7,6 @@
 //
 
 #import "DMFileService.h"
-#import "DMLooperService.h"
-#import "DMFileRepository.h"
-#import "DMTrack.h"
-
-@interface DMFileService()
-@property (nonatomic, strong) DMFileRepository *fileRepository;
-@end
 
 @implementation DMFileService
 
@@ -28,35 +21,9 @@
     return sharedInstance;
 }
 
--(instancetype)init
+-(void)deleteFileAtUrl:(NSURL*)url
 {
-    if (self = [super init]) {
-        _fileRepository = [DMFileRepository sharedInstance];
-    }
-    return self;
-}
-
--(void)deleteUnsavedFiles
-{
-    NSArray *currentFiles = [self.fileRepository files];
-    
-    NSMutableArray *filesToKeep = [NSMutableArray new];
-    for (DMLooper *looper in [[DMLooperService sharedInstance] loopers]) {
-        for (DMTrack *track in [looper recordedTracks]) {
-            [filesToKeep addObject:track.filename];
-        }
-    }
-    
-    for (NSString *filename in currentFiles) {
-        if (![filesToKeep containsObject:filename]) {
-            [self.fileRepository deleteFileNamed:filename];
-        }
-    }
-}
-
--(void)deleteFileNamed:(NSString*)filename
-{
-    [self.fileRepository deleteFileNamed:filename];
+    [[NSFileManager defaultManager] removeItemAtURL:url error:nil];
 }
 
 @end

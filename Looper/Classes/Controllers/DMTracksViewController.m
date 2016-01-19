@@ -11,7 +11,7 @@
 #import "UIViewController+DMHelpers.h"
 #import "DMTrackCell.h"
 
-@interface DMTracksViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
+@interface DMTracksViewController () <DMLooperDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
 
@@ -32,6 +32,7 @@
     if (self = [super initWithNibName:@"DMTracksView" bundle:nil]) {
         _looperService = [DMLooperService sharedInstance];
         _looper = looper;
+        _looper.delegate = self;
     }
     return self;
 }
@@ -116,7 +117,6 @@
 -(IBAction)finishRecordingTapped
 {
     [self.looper stopRecording];
-    [self.collectionView reloadData];
     
     self.playButton.alpha = 0;
     self.pauseButton.alpha = 1;
@@ -150,6 +150,14 @@
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;
     self.nextRecordingButton.alpha = 1;
+}
+
+
+#pragma mark - DMLooperDelegate
+
+-(void)tracksChanged
+{
+    [self.collectionView reloadData];
 }
 
 

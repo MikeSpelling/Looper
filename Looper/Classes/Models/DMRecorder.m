@@ -23,14 +23,12 @@ NSUInteger const DMTrackBitDepth = 16;
 
 @property (nonatomic, strong) DMTrack *recordingTrack;
 @property (nonatomic, strong) DMTrack *baseTrack;
+@property (nonatomic, assign) BOOL stopRequested;
 
 @property (nonatomic, weak) id<DMRecorderDelegate>recordDelegate;
 
 @property (nonatomic, strong) NSTimer *recordTimer;
-
-@property (nonatomic, assign) BOOL stopping;
 @end
-
 
 @implementation DMRecorder
 
@@ -41,14 +39,26 @@ NSUInteger const DMTrackBitDepth = 16;
         _recordersToDelete = [NSMutableArray new];
         
         _settings = @{
-                     AVFormatIDKey          : @(kAudioFormatAppleLossless),
-                     AVSampleRateKey        : @(DMTrackSampleRate),
-                     AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
-                     AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
-                     };
+                      AVFormatIDKey          : @(kAudioFormatLinearPCM),
+                      AVSampleRateKey        : @(DMTrackSampleRate),
+                      AVNumberOfChannelsKey  : @(DMTrackNumberOfChannels),
+                      AVLinearPCMBitDepthKey : @(DMTrackBitDepth)
+                      };
         [self createNextRecorder];
     }
     return self;
+}
+
+-(void)createNextRecorder
+{
+    __weak typeof (self)weakSelf = self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.caf", [[NSDate date] timeIntervalSince1970]]];
+        weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
+        weakSelf.preparedRecorder.meteringEnabled = YES;
+        [weakSelf.preparedRecorder prepareToRecord];
+        [weakSelf.recordersToDelete addObject:weakSelf.preparedRecorder];
+    });
 }
 
 -(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate
@@ -67,28 +77,25 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     self.recorder = self.preparedRecorder;
     self.preparedRecorder = nil;
+    
+    self.recorder.delegate = self;
+    
+    self.stopRequested = NO;
     if (self.baseTrack) {
         [self.recorder recordForDuration:self.baseTrack.duration];
     } else {
         [self.recorder record];
     }
     
-    [self createNextRecorder];
-    
     [self startRecordTimer];
+    
+    [self createNextRecorder];
 }
 
 -(void)stopRecording
 {
-    self.stopping = YES;
-    __weak typeof (self)weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (!weakSelf.baseTrack) {
-            weakSelf.baseTrack = weakSelf.recordingTrack;
-        }
-        
-        [weakSelf.recorder stop];
-    });
+    self.stopRequested = YES;
+    [self.recorder stop];
 }
 
 -(void)saveRecordings
@@ -101,20 +108,50 @@ NSUInteger const DMTrackBitDepth = 16;
 
 -(void)tearDown
 {
-    [self stopRecording];
+    self.recordDelegate = nil;
+    self.recorder.delegate = nil;
+    
+    [self stopRecordTimer];
+    
+    [self.recorder stop];
+    [self.preparedRecorder stop];
     self.recorder = nil;
     self.preparedRecorder = nil;
-    self.recordDelegate = nil;
     
     for (AVAudioRecorder *recorder in self.recordersToDelete) {
         [recorder deleteRecording];
     }
+    self.recordersToDelete = nil;
 }
 
--(NSTimeInterval)recordPosition
+-(BOOL)isRecording
 {
-    return self.recorder.currentTime;
+    return self.recorder.isRecording;
 }
+
+
+#pragma mark - AVAudioRecorderDelegate
+
+- (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
+{
+    [self stopRecordTimer];
+    
+    DMTrack *recordedTrack = self.recordingTrack;
+    self.recordingTrack = nil;
+    self.recorder = nil;
+    self.recorder.delegate = nil;
+    
+    [self.recordDelegate trackRecorded:recordedTrack];
+    
+    if (!self.baseTrack) {
+        self.baseTrack = recordedTrack;
+    }
+    
+    if (!self.stopRequested)  {
+        [self startRecordingNextTrack];
+    }
+}
+
 
 #pragma mark - Record timer
 
@@ -123,7 +160,7 @@ NSUInteger const DMTrackBitDepth = 16;
     if (self.recordTimer) {
         [self stopRecordTimer];
     }
-    self.recordTimer = [NSTimer scheduledTimerWithTimeInterval:0.01 target:self selector:@selector(recordTimerFired) userInfo:nil repeats:YES];
+    self.recordTimer = [NSTimer scheduledTimerWithTimeInterval:0.001 target:self selector:@selector(recordTimerFired) userInfo:nil repeats:YES];
 }
 
 -(void)stopRecordTimer
@@ -135,48 +172,6 @@ NSUInteger const DMTrackBitDepth = 16;
 -(void)recordTimerFired
 {
     [self.recordDelegate updateRecordPosition:self.recorder.currentTime];
-}
-
-
-#pragma mark - AVAudioRecorderDelegate
-
-- (void)audioRecorderDidFinishRecording:(AVAudioRecorder *)recorder successfully:(BOOL)flag
-{
-    if (self.stopping)
-    {
-        [self stopRecordTimer];
-        
-        if (self.recordingTrack.isBaseTrack) {
-            [self.recordDelegate baseTrackRecorded:self.recordingTrack];
-        }
-        else {
-            [self.recordDelegate trackRecorded:self.recordingTrack];
-        }
-        
-        self.recordingTrack = nil;
-        self.stopping = NO;
-    }
-    else
-    {
-        [self.recordDelegate trackRecorded:self.recordingTrack];
-        [self startRecordingNextTrack];
-    }
-}
-
-
-#pragma mark - Internal
-
--(void)createNextRecorder
-{
-    __weak typeof (self)weakSelf = self;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.caf", [[NSDate date] timeIntervalSince1970]]];
-        weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
-        weakSelf.preparedRecorder.meteringEnabled = YES;
-        weakSelf.preparedRecorder.delegate = weakSelf;
-        [weakSelf.preparedRecorder prepareToRecord];
-        [weakSelf.recordersToDelete addObject:weakSelf.preparedRecorder];
-    });
 }
 
 @end

@@ -11,7 +11,6 @@
 
 @protocol DMRecorderDelegate <NSObject>
 -(void)updateRecordPosition:(NSTimeInterval)position;
--(void)baseTrackRecorded:(DMTrack*)track;
 -(void)trackRecorded:(DMTrack*)track;
 @end
 
@@ -25,7 +24,7 @@
 -(void)saveRecordings;
 -(void)tearDown;
 
--(NSTimeInterval)recordPosition;
+-(BOOL)isRecording;
 
 @property (nonatomic, strong, readonly) DMTrack *recordingTrack;
 
