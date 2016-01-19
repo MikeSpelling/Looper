@@ -24,6 +24,7 @@
 -(void)setupForRecording;
 -(void)startRecording;
 -(void)stopRecording;
+-(void)scheduleRecordingForNextLoop;
 
 -(void)play;
 -(void)stopPlayback;

@@ -140,7 +140,6 @@
 -(IBAction)nextRecordingTapped
 {
     [self.looper stopRecording];
-    [self.collectionView reloadData];
     [self.looper startRecording];
     
     self.playButton.alpha = 1;

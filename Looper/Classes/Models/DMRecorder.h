@@ -20,7 +20,10 @@
 
 -(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate;
 -(void)startRecordingNextTrack;
+-(void)scheduleRecordingForNextLoop;
+
 -(void)stopRecording;
+
 -(void)saveRecordings;
 -(void)tearDown;
 

@@ -134,7 +134,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 -(void)startTimer
 {
     if (!self.timer) {
-        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, DISPATCH_TIMER_STRICT, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0));
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0/*DISPATCH_TIMER_STRICT*/, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT/*DISPATCH_QUEUE_PRIORITY_HIGH*/, 0));
         
         __weak typeof (self)weakSelf = self;
         dispatch_source_set_event_handler(self.timer, ^{

@@ -24,6 +24,7 @@ NSUInteger const DMTrackBitDepth = 16;
 @property (nonatomic, strong) DMTrack *recordingTrack;
 @property (nonatomic, strong) DMTrack *baseTrack;
 @property (nonatomic, assign) BOOL stopRequested;
+@property (nonatomic, assign) BOOL recordScheduled;
 
 @property (nonatomic, weak) id<DMRecorderDelegate>recordDelegate;
 
@@ -73,8 +74,24 @@ NSUInteger const DMTrackBitDepth = 16;
     self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url];
 }
 
+-(void)scheduleRecordingForNextLoop
+{
+    if (!self.recordScheduled) {
+        self.recordScheduled = YES;
+        
+        __weak typeof (self)weakSelf = self;
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.baseTrack.duration-self.baseTrack.currentTime * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            if (weakSelf.recordScheduled) {
+                [weakSelf startRecordingNextTrack];
+            }
+        });
+    }
+}
+
 -(void)startRecording
 {
+    self.recordScheduled = NO;
+    
     self.recorder = self.preparedRecorder;
     self.preparedRecorder = nil;
     
@@ -95,6 +112,7 @@ NSUInteger const DMTrackBitDepth = 16;
 -(void)stopRecording
 {
     self.stopRequested = YES;
+    self.recordScheduled = NO;
     [self.recorder stop];
 }
 

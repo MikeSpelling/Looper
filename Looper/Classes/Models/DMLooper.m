@@ -99,6 +99,11 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [self.recorder stopRecording];
 }
 
+-(void)scheduleRecordingForNextLoop
+{
+    [self.recorder scheduleRecordingForNextLoop];
+}
+
 -(void)play
 {
     //    [self.audioSession setActive:YES error:nil];
