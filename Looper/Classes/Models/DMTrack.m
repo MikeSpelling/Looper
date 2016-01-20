@@ -94,16 +94,14 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
 {
     _isMuted = isMuted;
     
-    self.player1.volume = isMuted ? 0 : self.volume;
-    self.player2.volume = isMuted ? 0 : self.volume;
+    [self setPlayersVolumes];
 }
 
 -(void)setVolume:(CGFloat)volume
 {
     _volume = volume;
     
-    self.player1.volume = self.isMuted ? 0 : volume;
-    self.player2.volume = self.isMuted ? 0 : volume;
+    [self setPlayersVolumes];
 }
 
 
@@ -113,14 +111,20 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
 {
     self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
     self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
-    self.player1.volume = self.volume;
     
     // May need to overlap if not a base track, needs second player
     if (!self.isBaseTrack) {
         self.player2 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
         self.player2.numberOfLoops = 0;
-        self.player2.volume = self.volume;
     }
+    
+    [self setPlayersVolumes];
+}
+
+-(void)setPlayersVolumes
+{
+    self.player1.volume = self.isMuted ? 0 : self.volume;
+    self.player2.volume = self.isMuted ? 0 : self.volume;
 }
 
 -(AVAudioPlayer*)currentlyPlayingPlayer
@@ -190,7 +194,7 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
     [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
-    [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsMutedCodingKey];
+    [encoder encodeBool:self.isMuted forKey:DMTrackIsMutedCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
