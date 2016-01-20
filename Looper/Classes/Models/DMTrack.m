@@ -11,6 +11,7 @@
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
+NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
 
 @interface DMTrack()
 @property (nonatomic, strong) dispatch_source_t timer;
@@ -28,6 +29,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     if (self = [super init]) {
         _offset = offset;
         _url = url;
+        _volume = 0.8;
     }
     return self;
 }
@@ -37,6 +39,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     if (self = [super init]) {
         _offset = 0;
         _url = url;
+        _volume = 0.8;
         _isBaseTrack = YES;
         _baseTrackDelegate = delegate;
     }
@@ -87,6 +90,14 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     return self.player1.duration;
 }
 
+-(void)setIsMuted:(BOOL)isMuted
+{
+    _isMuted = isMuted;
+    
+    self.player1.volume = isMuted ? 0 : self.volume;
+    self.player2.volume = isMuted ? 0 : self.volume;
+}
+
 
 #pragma mark - Internal
 
@@ -94,13 +105,13 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 {
     self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
     self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
-    self.player1.volume = 1;
+    self.player1.volume = self.volume;
     
     // May need to overlap if not a base track, needs second player
     if (!self.isBaseTrack) {
         self.player2 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
         self.player2.numberOfLoops = 0;
-        self.player2.volume = 1;
+        self.player2.volume = self.volume;
     }
 }
 
@@ -171,6 +182,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
     [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
+    [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsMutedCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -179,6 +191,7 @@ NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
         _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
+        _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
     }
     return self;
 }

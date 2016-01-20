@@ -32,6 +32,8 @@
 @property (nonatomic, assign, readonly) NSTimeInterval offset;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign) BOOL isBaseTrack;
+@property (nonatomic, assign) BOOL isMuted;
+@property (nonatomic, assign) CGFloat volume;
 
 -(BOOL)isEqualToTrack:(id)object;
 

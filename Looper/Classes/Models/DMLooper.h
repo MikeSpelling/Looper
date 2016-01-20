@@ -28,6 +28,7 @@
 
 -(void)play;
 -(void)stopPlayback;
+-(void)muteTrack:(DMTrack*)track muted:(BOOL)muted;
 
 -(NSArray*)recordedTracks;
 -(NSArray*)allTracks;

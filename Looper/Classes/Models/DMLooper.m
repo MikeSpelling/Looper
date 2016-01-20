@@ -119,6 +119,11 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     }
 }
 
+-(void)muteTrack:(DMTrack*)track muted:(BOOL)muted
+{
+    track.isMuted = muted;
+}
+
 -(void)saveRecordings
 {
     [self.recorder saveRecordings];

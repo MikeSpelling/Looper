@@ -170,6 +170,9 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DMTrackCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMTrackCellKey forIndexPath:indexPath];
+    
+    DMTrack *track = [self.looper allTracks][indexPath.item];
+    cell.backgroundColor = track.isMuted ? [UIColor grayColor] : [UIColor greenColor];
     return cell;
 }
 
@@ -203,7 +206,9 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"Tapped %lu", indexPath.item);
+    DMTrack *track = [self.looper allTracks][indexPath.item];
+    [self.looper muteTrack:track muted:!track.isMuted];
+    [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }
 
 
