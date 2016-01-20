@@ -215,7 +215,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
         }
     }
     
-    [self.delegate tracksChanged];
+    [self.delegate looperTracksChanged];
 }
 
 

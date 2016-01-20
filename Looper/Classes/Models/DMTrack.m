@@ -12,6 +12,7 @@ NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
+NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 
 @interface DMTrack()
 @property (nonatomic, strong) dispatch_source_t timer;
@@ -195,6 +196,7 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
     [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
     [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
     [encoder encodeBool:self.isMuted forKey:DMTrackIsMutedCodingKey];
+    [encoder encodeFloat:self.volume forKey:DMTrackVolumeCodingKey];
 }
 
 -(id)initWithCoder:(NSCoder *)decoder
@@ -204,6 +206,7 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
         _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
         _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
         _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
+        _volume = [decoder decodeFloatForKey:DMTrackVolumeCodingKey];
     }
     return self;
 }

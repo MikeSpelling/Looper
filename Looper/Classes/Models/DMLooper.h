@@ -10,7 +10,8 @@
 #import "DMTrack.h"
 
 @protocol DMLooperDelegate <NSObject>
--(void)tracksChanged;
+-(void)looperTracksChanged;
+-(void)looperTimeUpdated:(NSTimeInterval)position;
 @end
 
 @interface DMLooper : NSObject

@@ -154,9 +154,14 @@
 
 #pragma mark - DMLooperDelegate
 
--(void)tracksChanged
+-(void)looperTracksChanged
 {
     [self.collectionView reloadData];
+}
+
+-(void)looperTimeUpdated:(NSTimeInterval)position
+{
+    
 }
 
 
