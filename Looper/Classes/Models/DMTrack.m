@@ -98,6 +98,14 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
     self.player2.volume = isMuted ? 0 : self.volume;
 }
 
+-(void)setVolume:(CGFloat)volume
+{
+    _volume = volume;
+    
+    self.player1.volume = self.isMuted ? 0 : volume;
+    self.player2.volume = self.isMuted ? 0 : volume;
+}
+
 
 #pragma mark - Internal
 
@@ -216,12 +224,20 @@ NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
         return NO;
     }
     
+    if (fabs(track.volume-self.volume) > 0.0001) {
+        return NO;
+    }
+    
     BOOL urlsSame = (!track.url && !self.url) || [track.url.absoluteString isEqualToString:self.url.absoluteString];
     if (!urlsSame) {
         return NO;
     }
     
     if (track.isBaseTrack != self.isBaseTrack) {
+        return NO;
+    }
+    
+    if (track.isMuted != self.isMuted) {
         return NO;
     }
     
