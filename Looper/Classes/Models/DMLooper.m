@@ -136,6 +136,15 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     }
 }
 
+-(void)deleteTrack:(DMTrack*)track
+{
+    if ([self.extraTracks containsObject:track]) {
+        [track stopPlayback];
+        [self.fileService deleteFileAtUrl:track.url];
+        [self.extraTracks removeObject:track];
+    }
+}
+
 -(void)tearDown
 {
     for (DMTrack *track in [self allTracks]) {
@@ -160,11 +169,10 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(NSArray*)allTracks
 {
-    NSMutableArray *allTracks = [NSMutableArray new];
+    NSArray *allTracks = [self recordedTracks];
     if (self.recorder.recordingTrack) {
-        [allTracks addObject:self.recorder.recordingTrack];
+        allTracks = [allTracks arrayByAddingObject:self.recorder.recordingTrack];
     }
-    [allTracks addObjectsFromArray:[self recordedTracks]];
     return allTracks;
 }
 

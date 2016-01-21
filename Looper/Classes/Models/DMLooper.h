@@ -11,7 +11,6 @@
 
 @protocol DMLooperDelegate <NSObject>
 -(void)looperTracksChanged;
--(void)looperTimeUpdated:(NSTimeInterval)position;
 @end
 
 @interface DMLooper : NSObject
@@ -36,6 +35,7 @@
 
 -(void)saveRecordings;
 -(void)deleteRecordings;
+-(void)deleteTrack:(DMTrack*)track;
 -(void)tearDown;
 
 -(BOOL)isEqualToLooper:(id)object;

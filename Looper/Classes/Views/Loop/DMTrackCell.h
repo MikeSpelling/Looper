@@ -7,9 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DMTrack.h"
 
 extern NSString *const DMTrackCellKey;
 
 @interface DMTrackCell : UICollectionViewCell
+
+-(void)updateForTrack:(DMTrack*)track
+          currentTime:(NSTimeInterval)currentTime
+         baseDuration:(NSTimeInterval)baseDuration
+          deleteBlock:(void (^)())deleteBlock;
+
+-(void)updateForTime:(NSTimeInterval)time;
 
 @end

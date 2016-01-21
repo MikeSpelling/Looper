@@ -30,6 +30,7 @@
 -(NSTimeInterval)duration;
 
 @property (nonatomic, assign, readonly) NSTimeInterval offset;
+@property (nonatomic, assign, readonly) NSTimeInterval duration;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign) BOOL isBaseTrack;
 @property (nonatomic, assign) BOOL isMuted;

@@ -10,6 +10,7 @@
 
 NSString *const DMTrackUrlCodingKey = @"DMTrackUrlCodingKey";
 NSString *const DMTrackOffsetCodingKey = @"DMTrackOffsetCodingKey";
+NSString *const DMTrackDurationCodingKey = @"DMTrackDurationCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
 NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
@@ -86,11 +87,6 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     return self.currentlyPlayingPlayer.currentTime;
 }
 
--(NSTimeInterval)duration
-{
-    return self.player1.duration;
-}
-
 -(void)setIsMuted:(BOOL)isMuted
 {
     _isMuted = isMuted;
@@ -112,6 +108,7 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 {
     self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
     self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
+    _duration = self.player1.duration;
     
     // May need to overlap if not a base track, needs second player
     if (!self.isBaseTrack) {
@@ -194,6 +191,7 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 {
     [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
     [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
+    [encoder encodeDouble:self.duration forKey:DMTrackDurationCodingKey];
     [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
     [encoder encodeBool:self.isMuted forKey:DMTrackIsMutedCodingKey];
     [encoder encodeFloat:self.volume forKey:DMTrackVolumeCodingKey];
@@ -204,6 +202,7 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     if (self = [super init]) {
         _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
         _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
+        _duration = [decoder decodeDoubleForKey:DMTrackDurationCodingKey];
         _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
         _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
         _volume = [decoder decodeFloatForKey:DMTrackVolumeCodingKey];
@@ -228,6 +227,10 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     
     // Precision lost when serialized
     if (fabs(track.offset-self.offset) > 0.0001) {
+        return NO;
+    }
+    
+    if (fabs(track.duration-self.duration) > 0.0001) {
         return NO;
     }
     

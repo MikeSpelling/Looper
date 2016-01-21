@@ -14,6 +14,7 @@
 @interface DMTracksViewController () <DMLooperDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
+@property (nonatomic, strong) NSTimer *timer;
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
 @property (nonatomic, weak) IBOutlet UIButton *playButton;
@@ -49,6 +50,8 @@
     self.startRecordingButton.alpha = 1;
     self.finishRecordingButton.alpha = 0;
     self.nextRecordingButton.alpha = 0;
+    
+    [self startTimer];
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -159,11 +162,6 @@
     [self.collectionView reloadData];
 }
 
--(void)looperTimeUpdated:(NSTimeInterval)position
-{
-    
-}
-
 
 #pragma mark - UICollectionViewDataSource
 
@@ -177,7 +175,11 @@
     DMTrackCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMTrackCellKey forIndexPath:indexPath];
     
     DMTrack *track = [self.looper allTracks][indexPath.item];
-    cell.backgroundColor = track.isMuted ? [UIColor grayColor] : [UIColor greenColor];
+    __weak typeof (self)weakSelf = self;
+    [cell updateForTrack:track currentTime:self.looper.baseTrack.currentTime baseDuration:self.looper.baseTrack.duration deleteBlock:^{
+        [weakSelf.looper deleteTrack:track];
+        [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+    }];
     return cell;
 }
 
@@ -217,6 +219,26 @@
 }
 
 
+#pragma mark - Timer
+
+-(void)startTimer
+{
+    // 50fps
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.02 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
+}
+
+-(void)stopTimer
+{
+    [self.timer invalidate];
+    self.timer = nil;
+}
+
+-(void)timerFired
+{
+    [self updateVisibleCellsForTime];
+}
+
+
 #pragma mark - Internal
 
 -(void)registerCells
@@ -228,6 +250,13 @@
 -(CGSize)cellSize
 {
     return CGSizeMake(self.collectionView.bounds.size.width, self.collectionView.bounds.size.height/6.0);
+}
+
+-(void)updateVisibleCellsForTime
+{
+    for (DMTrackCell *cell in [self.collectionView visibleCells]) {
+        [cell updateForTime:self.looper.baseTrack.currentTime];
+    }
 }
 
 @end
