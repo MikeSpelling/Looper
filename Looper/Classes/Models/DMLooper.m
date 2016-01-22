@@ -203,9 +203,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)trackRecorded:(DMTrack *)track
 {
-    //    NSString *category = self.recorder.isRecording ? AVAudioSessionCategoryPlayAndRecord : AVAudioSessionCategoryPlayback;
-    //    [self.audioSession setCategory:category error:nil];
-    
     if (!self.baseTrack) {
         self.baseTrack = track;
         [self.baseTrack playAtTime:0];

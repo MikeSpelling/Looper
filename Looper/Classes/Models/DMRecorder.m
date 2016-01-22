@@ -54,24 +54,32 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     __weak typeof (self)weakSelf = self;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.caf", [[NSDate date] timeIntervalSince1970]]];
-        weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
-        weakSelf.preparedRecorder.meteringEnabled = YES;
-        [weakSelf.preparedRecorder prepareToRecord];
-        [weakSelf.recordersToDelete addObject:weakSelf.preparedRecorder];
+        if (!weakSelf.preparedRecorder) {
+            NSArray *pathComponents = @[[DMEnvironment sharedInstance].baseFilePath, [NSString stringWithFormat:@"%f.caf", [[NSDate date] timeIntervalSince1970]]];
+            weakSelf.preparedRecorder = [[AVAudioRecorder alloc] initWithURL:[NSURL fileURLWithPathComponents:pathComponents] settings:weakSelf.settings error:nil];
+            weakSelf.preparedRecorder.meteringEnabled = YES;
+            [weakSelf.preparedRecorder prepareToRecord];
+            if (weakSelf.preparedRecorder) {
+                [weakSelf.recordersToDelete addObject:weakSelf.preparedRecorder];
+            }
+        }
     });
 }
 
 -(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate
 {
-    [self startRecording];
-    self.recordingTrack = [[DMTrack alloc] initAsBaseTrackWithUrl:self.recorder.url delegate:delegate];
+    if (!self.stopRequested) {
+        [self startRecording];
+        self.recordingTrack = [[DMTrack alloc] initAsBaseTrackWithUrl:self.recorder.url delegate:delegate];
+    }
 }
 
 -(void)startRecordingNextTrack
 {
-    [self startRecording];
-    self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url];
+    if (!self.stopRequested) {
+        [self startRecording];
+        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url];
+    }
 }
 
 -(void)scheduleRecordingForNextLoop
@@ -82,6 +90,7 @@ NSUInteger const DMTrackBitDepth = 16;
         __weak typeof (self)weakSelf = self;
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.baseTrack.duration-self.baseTrack.currentTime * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             if (weakSelf.recordScheduled) {
+                weakSelf.recordScheduled = NO;
                 [weakSelf startRecordingNextTrack];
             }
         });
@@ -90,30 +99,32 @@ NSUInteger const DMTrackBitDepth = 16;
 
 -(void)startRecording
 {
-    self.recordScheduled = NO;
-    
     self.recorder = self.preparedRecorder;
     self.preparedRecorder = nil;
     
-    self.recorder.delegate = self;
-    
-    self.stopRequested = NO;
-    if (self.baseTrack) {
-        [self.recorder recordForDuration:self.baseTrack.duration];
-    } else {
-        [self.recorder record];
+    if (self.recorder) {
+        self.recorder.delegate = self;
+        
+        if (self.baseTrack) {
+            [self.recorder recordForDuration:self.baseTrack.duration];
+        } else {
+            [self.recorder record];
+        }
+        
+        [self startRecordTimer];
     }
-    
-    [self startRecordTimer];
     
     [self createNextRecorder];
 }
 
 -(void)stopRecording
 {
-    self.stopRequested = YES;
     self.recordScheduled = NO;
-    [self.recorder stop];
+    
+    if (self.recorder.isRecording) {
+        self.stopRequested = YES;
+        [self.recorder stop];
+    }
 }
 
 -(void)saveRecordings
@@ -155,18 +166,20 @@ NSUInteger const DMTrackBitDepth = 16;
     [self stopRecordTimer];
     
     DMTrack *recordedTrack = self.recordingTrack;
-    [recordedTrack createPlayers];
+    BOOL stopRequested = self.stopRequested;
+    
+    self.stopRequested = NO;
     self.recordingTrack = nil;
     self.recorder = nil;
     self.recorder.delegate = nil;
     
+    [recordedTrack createPlayers];
     [self.recordDelegate trackRecorded:recordedTrack];
-    
     if (!self.baseTrack) {
         self.baseTrack = recordedTrack;
     }
     
-    if (!self.stopRequested)  {
+    if (!stopRequested)  {
         [self startRecordingNextTrack];
     }
 }

@@ -93,7 +93,7 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
         self.rightTrackWidthConstraint.constant = width;
         self.rightTrackTrailingConstraint.constant = 0;
     }
-    else
+    else if (self.baseDuration)
     {
         if (self.track.duration)
         {
@@ -147,7 +147,7 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
             self.rightProgressWidthConstraint.constant = width;
         }
     }
-    else
+    else if (self.baseDuration)
     {
         if (self.track.duration)
         {

@@ -178,10 +178,8 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     AVAudioPlayer *player = self.currentlyPlayingPlayer;
     NSTimeInterval currentPosition = player.currentTime;
     if (currentPosition < self.lastKnownPosition) {
-        NSLog(@"Looped %f/%f", currentPosition, player.duration);
         [self.baseTrackDelegate baseTrackDidLoop];
     }
-    //    NSLog(@"%f", player.currentTime);
     self.lastKnownPosition = currentPosition;
 }
 

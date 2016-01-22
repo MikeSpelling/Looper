@@ -28,7 +28,6 @@
 
 -(BOOL)isPlaying;
 -(NSTimeInterval)currentTime;
--(NSTimeInterval)duration;
 
 @property (nonatomic, assign, readonly) NSTimeInterval offset;
 @property (nonatomic, assign, readonly) NSTimeInterval duration;
