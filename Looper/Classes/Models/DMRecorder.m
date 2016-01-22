@@ -155,6 +155,7 @@ NSUInteger const DMTrackBitDepth = 16;
     [self stopRecordTimer];
     
     DMTrack *recordedTrack = self.recordingTrack;
+    [recordedTrack createPlayers];
     self.recordingTrack = nil;
     self.recorder = nil;
     self.recorder.delegate = nil;

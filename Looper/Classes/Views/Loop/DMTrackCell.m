@@ -21,9 +21,9 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
 @property (nonatomic, weak) IBOutlet UIView *rightTrack;
 @property (nonatomic, weak) IBOutlet UIView *leftProgress;
 @property (nonatomic, weak) IBOutlet UIView *rightProgress;
-@property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftTrackLeadingConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftTrackWidthConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightTrackWidthConstraint;
+@property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightTrackTrailingConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leftProgressWidthConstraint;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *rightProgressWidthConstraint;
 
@@ -44,6 +44,7 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
     self.deleteButton.alpha = track.isBaseTrack ? 0 : 1;
     
     [self setColorsForTrack];
+    [self setupTrackViews];
     [self updateProgressViewsForTime:currentTime];
 }
 
@@ -79,72 +80,105 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
     self.rightProgress.backgroundColor = progressColor;
 }
 
--(void)updateProgressViewsForTime:(NSTimeInterval)time
+-(void)setupTrackViews
 {
     [self layoutIfNeeded];
+    
     CGFloat width = self.progressView.bounds.size.width;
-    CGFloat position = (time / self.baseDuration) * width;
+    CGFloat timeToWidthMult = width / self.baseDuration;
+    
+    if (self.track.isBaseTrack)
+    {
+        self.leftTrackWidthConstraint.constant = 0;
+        self.rightTrackWidthConstraint.constant = width;
+        self.rightTrackTrailingConstraint.constant = 0;
+    }
+    else
+    {
+        if (self.track.duration)
+        {
+            if (self.track.offset + self.track.duration >= self.baseDuration)
+            {
+                // Recorded Split track
+                CGFloat trackWidth = self.track.duration * timeToWidthMult;
+                CGFloat rightTrackWidth = width - (self.track.offset  * timeToWidthMult);
+                self.rightTrackWidthConstraint.constant = rightTrackWidth;
+                self.rightTrackTrailingConstraint.constant = 0;
+                
+                self.leftTrackWidthConstraint.constant = trackWidth - rightTrackWidth;
+            }
+            else
+            {
+                // Recorded Confined track
+                self.rightTrackTrailingConstraint.constant = (self.baseDuration - self.track.offset - self.track.duration) * timeToWidthMult;
+                self.rightTrackWidthConstraint.constant = self.track.duration * timeToWidthMult;
+                self.leftTrackWidthConstraint.constant = 0;
+            }
+        }
+        else
+        {
+            // Unrecorded track
+            self.leftTrackWidthConstraint.constant = 0;
+            self.rightTrackWidthConstraint.constant = 0;
+            self.rightTrackTrailingConstraint.constant = 0;
+        }
+    }
+    
+    [self layoutIfNeeded];
+}
+
+-(void)updateProgressViewsForTime:(NSTimeInterval)time
+{
+    CGFloat width = self.progressView.bounds.size.width;
+    CGFloat timeToWidthMult = width / self.baseDuration;
     
     if (self.track.isBaseTrack)
     {
         if (self.baseDuration)
         {
             // Base track recorded
-            self.leftTrackLeadingConstraint.constant = 0;
-            self.leftTrackWidthConstraint.constant = width;
-            self.leftProgressWidthConstraint.constant = position;
-            self.rightTrackWidthConstraint.constant = 0;
-            self.rightProgressWidthConstraint.constant = 0;
+            self.leftProgressWidthConstraint.constant = 0;
+            self.rightProgressWidthConstraint.constant = time * timeToWidthMult;
         }
         else
         {
             // Base track while recording
-            self.leftTrackLeadingConstraint.constant = 0;
-            self.leftTrackWidthConstraint.constant = width;
             self.leftProgressWidthConstraint.constant = 0;
-            self.rightTrackWidthConstraint.constant = 0;
-            self.rightProgressWidthConstraint.constant = 0;
+            self.rightProgressWidthConstraint.constant = width;
         }
     }
     else
     {
-        // Get bounded time within track
-        CGFloat timeWithinTrack = time - self.track.offset;
-        if (timeWithinTrack<0) timeWithinTrack = self.baseDuration - self.track.offset + time;
-        if (timeWithinTrack>self.track.duration) timeWithinTrack = self.track.duration;
-        
         if (self.track.duration)
         {
-            if (self.track.offset + self.track.duration >= self.baseDuration)
+            BOOL trackWrapped = self.track.offset + self.track.duration >= self.baseDuration;
+            
+            if (trackWrapped)
             {
-                // Recorded Split track
-                CGFloat trackWidth = (self.track.duration / self.baseDuration) * width;
-                CGFloat rightTrackWidth = width - ((self.track.offset / self.baseDuration) * width);
-                self.rightTrackWidthConstraint.constant = rightTrackWidth;
-                CGFloat rightProgressWidth = (timeWithinTrack / self.track.duration) * trackWidth;
-                self.rightProgressWidthConstraint.constant = rightProgressWidth > rightTrackWidth ? rightTrackWidth : rightProgressWidth;
-
-                self.leftTrackLeadingConstraint.constant = 0;
-                self.leftTrackWidthConstraint.constant = trackWidth - rightTrackWidth;
-                self.leftProgressWidthConstraint.constant = rightProgressWidth >= rightTrackWidth ? rightProgressWidth-rightTrackWidth : 0;
+                NSTimeInterval wrappedEndTime = fabs(self.baseDuration - (self.track.offset + self.track.duration));
+                if (time >= self.track.offset) {
+                    self.rightProgressWidthConstraint.constant = (time - self.track.offset) * timeToWidthMult;
+                    self.leftProgressWidthConstraint.constant = wrappedEndTime * timeToWidthMult;
+                }
+                else {
+                    self.rightProgressWidthConstraint.constant = 0;
+                    CGFloat boundedTime = time > wrappedEndTime ? wrappedEndTime : time;
+                    self.leftProgressWidthConstraint.constant = boundedTime  * timeToWidthMult;
+                }
             }
             else
             {
-                // Recorded Confined track
-                self.leftTrackLeadingConstraint.constant = (self.track.offset / self.baseDuration) * width;
-                CGFloat trackWidth = (self.track.duration / self.baseDuration) * width;
-                self.leftTrackWidthConstraint.constant = trackWidth;
-                self.leftProgressWidthConstraint.constant = (timeWithinTrack / self.track.duration) * trackWidth;
-                self.rightTrackWidthConstraint.constant = 0;
-                self.rightProgressWidthConstraint.constant = 0;
+                self.leftProgressWidthConstraint.constant = 0;
+                CGFloat boundedTime = time - self.track.offset;
+                if (boundedTime < 0) boundedTime = 0;
+                else if (boundedTime > self.track.duration) boundedTime = self.track.duration;
+                self.rightProgressWidthConstraint.constant = boundedTime * timeToWidthMult;
             }
         }
         else
         {
-            self.leftTrackLeadingConstraint.constant = 0;
-            self.leftTrackWidthConstraint.constant = 0;
+            // Recording
             self.leftProgressWidthConstraint.constant = 0;
-            self.rightTrackWidthConstraint.constant = 0;
             self.rightProgressWidthConstraint.constant = 0;
         }
     }

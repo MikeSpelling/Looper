@@ -107,12 +107,12 @@
                 <outlet property="leftProgress" destination="PV8-oi-1PM" id="L2d-89-cT5"/>
                 <outlet property="leftProgressWidthConstraint" destination="G9K-FV-nci" id="VIQ-eD-EYO"/>
                 <outlet property="leftTrack" destination="din-zL-EQg" id="Gha-hi-cYG"/>
-                <outlet property="leftTrackLeadingConstraint" destination="QZN-Lx-JHd" id="wq9-tk-Q96"/>
                 <outlet property="leftTrackWidthConstraint" destination="Fbe-tM-dMK" id="KHt-r5-Ymb"/>
                 <outlet property="progressView" destination="GB3-Pu-Udo" id="vsS-g2-DZ0"/>
                 <outlet property="rightProgress" destination="Xq4-kA-gLH" id="Ctf-ro-nP2"/>
                 <outlet property="rightProgressWidthConstraint" destination="ZkT-rQ-opV" id="7jW-wx-BRd"/>
                 <outlet property="rightTrack" destination="rJO-om-JOv" id="q8o-5M-nPh"/>
+                <outlet property="rightTrackTrailingConstraint" destination="F7D-GV-eGj" id="sWL-Si-7Du"/>
                 <outlet property="rightTrackWidthConstraint" destination="uTO-lq-OPv" id="Drt-za-cSa"/>
             </connections>
             <point key="canvasLocation" x="488" y="172"/>

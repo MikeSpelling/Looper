@@ -50,7 +50,6 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 
 -(void)playAtTime:(NSTimeInterval)time
 {
-    // Lazy load the players when we want to play - ensures we should have required metadata
     if (!self.player1) {
         [self createPlayers];
     }
@@ -101,23 +100,25 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     [self setPlayersVolumes];
 }
 
-
-#pragma mark - Internal
-
 -(void)createPlayers
 {
     self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
     self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
+    [self.player1 prepareToPlay];
     _duration = self.player1.duration;
     
     // May need to overlap if not a base track, needs second player
     if (!self.isBaseTrack) {
         self.player2 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
         self.player2.numberOfLoops = 0;
+        [self.player2 prepareToPlay];
     }
     
     [self setPlayersVolumes];
 }
+
+
+#pragma mark - Internal
 
 -(void)setPlayersVolumes
 {
@@ -206,6 +207,8 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
         _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
         _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
         _volume = [decoder decodeFloatForKey:DMTrackVolumeCodingKey];
+        
+        [self createPlayers];
     }
     return self;
 }

@@ -177,8 +177,9 @@
     DMTrack *track = [self.looper allTracks][indexPath.item];
     __weak typeof (self)weakSelf = self;
     [cell updateForTrack:track currentTime:self.looper.baseTrack.currentTime baseDuration:self.looper.baseTrack.duration deleteBlock:^{
+        NSUInteger trackIndex = [[self.looper allTracks] indexOfObject:track];
         [weakSelf.looper deleteTrack:track];
-        [weakSelf.collectionView deleteItemsAtIndexPaths:@[indexPath]];
+        [weakSelf.collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:trackIndex inSection:0]]];
     }];
     return cell;
 }
