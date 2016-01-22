@@ -224,8 +224,8 @@
 
 -(void)startTimer
 {
-    // 50fps
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.02 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
+    self.timer = [NSTimer timerWithTimeInterval:0.02 target:self selector:@selector(timerFired) userInfo:nil repeats:YES];
+    [[NSRunLoop mainRunLoop] addTimer:self.timer forMode:NSRunLoopCommonModes]; // So collection view scrolling doesnt interfere
 }
 
 -(void)stopTimer

@@ -69,7 +69,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)setupForRecording
 {
     // Changing stuff on session seems to take too long
-    //    [_audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
     [self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     [self.audioSession setActive:YES error:nil];
     
@@ -80,9 +79,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)startRecording
 {
-    //    [self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
-    //    [self.audioSession setActive:YES error:nil];
-    
     if (self.baseTrack) {
         if (!self.baseTrack.isPlaying) {
             [self play];
@@ -105,16 +101,14 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 }
 
 -(void)play
-{
-    //    [self.audioSession setActive:YES error:nil];
-    
+{    
     [self.baseTrack playAtTime:0];
     [self scheduleExtraTracksForPlayback];
 }
 
 -(void)stopPlayback
 {
-    for (DMTrack *track in [self recordedTracks]) {
+    for (DMTrack *track in [[self recordedTracks] copy]) {
         [track stopPlayback];
     }
 }
@@ -131,7 +125,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)deleteRecordings
 {
-    for (DMTrack *track in [self allTracks]) {
+    for (DMTrack *track in [[self allTracks] copy]) {
         [self.fileService deleteFileAtUrl:track.url];
     }
 }
@@ -194,7 +188,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)scheduleExtraTracksForPlayback
 {
-    for (DMTrack *track in self.extraTracks) {
+    for (DMTrack *track in [self.extraTracks copy]) {
         [track playAtTime:track.offset - self.baseTrack.currentTime];
     }
 }
