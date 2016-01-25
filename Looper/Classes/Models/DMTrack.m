@@ -48,20 +48,38 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     return self;
 }
 
--(void)playAtTime:(NSTimeInterval)time
+-(void)playAtTime:(NSTimeInterval)time baseDuration:(NSTimeInterval)baseDuration
 {
     if (!self.player1) {
         [self createPlayers];
     }
     
-    // Get a player that is ready to play
+    NSLog(@"\n\n");
+    NSLog(@"%@ Play - time %f", self.isBaseTrack ? @"Base track" : @"Extra track", time);
+    
+    // Check whether should already be playing (wrapped track)
+    if (!self.isBaseTrack && !self.isPlaying) {
+        NSTimeInterval wrappedEndTime = self.offset + self.duration - baseDuration;
+        NSLog(@"Wrapped end time %F", wrappedEndTime);
+        if (time < wrappedEndTime) {
+            AVAudioPlayer *player = self.freePlayer;
+            NSLog(@"SO %@ play at %f", player, baseDuration - self.offset + time);
+            player.currentTime = baseDuration - self.offset + time;
+            [player play];
+        }
+    }
+    
+    // Schedule next play on the next free player
+    NSTimeInterval adjustedTime = self.offset - time;
     AVAudioPlayer *player = self.freePlayer;
-    if (time <= 0) {
-        player.currentTime = -time;
+    if (adjustedTime <= 0) {
+        player.currentTime = -adjustedTime;
+        NSLog(@"%@ play %f", player, -adjustedTime);
         [player play];
     }
     else {
-        [player playAtTime:player.deviceCurrentTime+time];
+        NSLog(@"%@ play in %f", player, adjustedTime);
+        [player playAtTime:player.deviceCurrentTime+adjustedTime];
     }
     
     if (self.isBaseTrack) {
@@ -74,6 +92,7 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     [self.player1 stop];
     [self.player2 stop];
     [self stopTimer];
+    self.lastKnownPosition = 0;
 }
 
 -(BOOL)isPlaying

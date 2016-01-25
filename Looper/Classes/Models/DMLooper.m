@@ -102,7 +102,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)play
 {    
-    [self.baseTrack playAtTime:0];
+    [self.baseTrack playAtTime:0 baseDuration:self.baseTrack.duration];
     [self scheduleExtraTracksForPlayback];
 }
 
@@ -189,7 +189,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)scheduleExtraTracksForPlayback
 {
     for (DMTrack *track in [self.extraTracks copy]) {
-        [track playAtTime:track.offset - self.baseTrack.currentTime];
+        [track playAtTime:self.baseTrack.currentTime baseDuration:self.baseTrack.duration];
     }
 }
 
@@ -205,12 +205,12 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 {
     if (!self.baseTrack) {
         self.baseTrack = track;
-        [self.baseTrack playAtTime:0];
+        [self.baseTrack playAtTime:0 baseDuration:self.baseTrack.duration];
     }
     else {
         [self.extraTracks addObject:track];
         if (track.offset >= self.baseTrack.currentTime) {
-            [track playAtTime:track.offset - self.baseTrack.currentTime];
+            [track playAtTime:track.offset - self.baseTrack.currentTime baseDuration:self.baseTrack.duration];
         }
     }
     

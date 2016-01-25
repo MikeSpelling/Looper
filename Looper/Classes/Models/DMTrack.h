@@ -23,7 +23,7 @@
 @property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
 -(void)createPlayers;
--(void)playAtTime:(NSTimeInterval)time;
+-(void)playAtTime:(NSTimeInterval)time baseDuration:(NSTimeInterval)baseDuration;
 -(void)stopPlayback;
 
 -(BOOL)isPlaying;
