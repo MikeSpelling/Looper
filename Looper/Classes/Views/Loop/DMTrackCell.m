@@ -11,8 +11,7 @@
 NSString *const DMTrackCellKey = @"DMTrackCell";
 
 @interface DMTrackCell()
-@property (nonatomic, strong) DMTrack *track;
-@property (nonatomic, assign) NSTimeInterval baseDuration;
+@property (nonatomic, weak) DMTrack *track;
 @property (nonatomic, copy) void (^deleteTappedBlock)();
 
 @property (nonatomic, weak) IBOutlet UIButton *deleteButton;
@@ -35,11 +34,9 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
 
 -(void)updateForTrack:(DMTrack*)track
           currentTime:(NSTimeInterval)currentTime
-         baseDuration:(NSTimeInterval)baseDuration
           deleteBlock:(void (^)())deleteBlock
 {
     self.track = track;
-    self.baseDuration = baseDuration;
     self.deleteTappedBlock = deleteBlock;
     self.deleteButton.alpha = track.isBaseTrack ? 0 : 1;
     
@@ -85,7 +82,7 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
     [self layoutIfNeeded];
     
     CGFloat width = self.progressView.bounds.size.width;
-    CGFloat timeToWidthMult = width / self.baseDuration;
+    CGFloat timeToWidthMult = width / self.track.baseDuration;
     
     if (self.track.isBaseTrack)
     {
@@ -93,11 +90,11 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
         self.rightTrackWidthConstraint.constant = width;
         self.rightTrackTrailingConstraint.constant = 0;
     }
-    else if (self.baseDuration)
+    else if (self.track.baseDuration)
     {
         if (self.track.duration)
         {
-            if (self.track.offset + self.track.duration >= self.baseDuration)
+            if (self.track.offset + self.track.duration >= self.track.baseDuration)
             {
                 // Recorded Split track
                 CGFloat trackWidth = self.track.duration * timeToWidthMult;
@@ -110,7 +107,7 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
             else
             {
                 // Recorded Confined track
-                self.rightTrackTrailingConstraint.constant = (self.baseDuration - self.track.offset - self.track.duration) * timeToWidthMult;
+                self.rightTrackTrailingConstraint.constant = (self.track.baseDuration - self.track.offset - self.track.duration) * timeToWidthMult;
                 self.rightTrackWidthConstraint.constant = self.track.duration * timeToWidthMult;
                 self.leftTrackWidthConstraint.constant = 0;
             }
@@ -130,11 +127,11 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
 -(void)updateProgressViewsForTime:(NSTimeInterval)time
 {
     CGFloat width = self.progressView.bounds.size.width;
-    CGFloat timeToWidthMult = width / self.baseDuration;
+    CGFloat timeToWidthMult = width / self.track.baseDuration;
     
     if (self.track.isBaseTrack)
     {
-        if (self.baseDuration)
+        if (self.track.baseDuration)
         {
             // Base track recorded
             self.leftProgressWidthConstraint.constant = 0;
@@ -147,15 +144,15 @@ NSString *const DMTrackCellKey = @"DMTrackCell";
             self.rightProgressWidthConstraint.constant = width;
         }
     }
-    else if (self.baseDuration)
+    else if (self.track.baseDuration)
     {
         if (self.track.duration)
         {
-            BOOL trackWrapped = self.track.offset + self.track.duration >= self.baseDuration;
+            BOOL trackWrapped = self.track.offset + self.track.duration >= self.track.baseDuration;
             
             if (trackWrapped)
             {
-                NSTimeInterval wrappedEndTime = fabs(self.baseDuration - (self.track.offset + self.track.duration));
+                NSTimeInterval wrappedEndTime = fabs(self.track.baseDuration - (self.track.offset + self.track.duration));
                 if (time >= self.track.offset) {
                     self.rightProgressWidthConstraint.constant = (time - self.track.offset) * timeToWidthMult;
                     self.leftProgressWidthConstraint.constant = wrappedEndTime * timeToWidthMult;

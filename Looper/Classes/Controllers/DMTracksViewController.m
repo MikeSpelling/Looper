@@ -14,6 +14,7 @@
 @interface DMTracksViewController () <DMLooperDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, strong) DMLooperService *looperService;
 @property (nonatomic, strong) DMLooper *looper;
+@property (nonatomic, strong) NSArray *tracks;
 @property (nonatomic, strong) NSTimer *timer;
 
 @property (nonatomic, weak) IBOutlet UICollectionView *collectionView;
@@ -54,8 +55,18 @@
     [self startTimer];
 }
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    self.tracks = self.looper.allTracks;
+    [self.collectionView reloadData];
+}
+
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
+    
     [self.looper tearDown];
 }
 
@@ -133,7 +144,6 @@
 -(IBAction)startRecordingTapped
 {
     [self.looper startRecording];
-    [self.collectionView reloadData];
     
     self.startRecordingButton.alpha = 0;
     self.finishRecordingButton.alpha = 1;
@@ -159,6 +169,7 @@
 
 -(void)looperTracksChanged
 {
+    self.tracks = self.looper.allTracks;
     [self.collectionView reloadData];
 }
 
@@ -167,18 +178,19 @@
 
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return [self.looper allTracks].count;
+    return self.tracks.count;
 }
 
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DMTrackCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMTrackCellKey forIndexPath:indexPath];
     
-    DMTrack *track = [self.looper allTracks][indexPath.item];
+    __weak typeof (DMTrack*) track = self.tracks[indexPath.item];
     __weak typeof (self)weakSelf = self;
-    [cell updateForTrack:track currentTime:self.looper.baseTrack.currentTime baseDuration:self.looper.baseTrack.duration deleteBlock:^{
-        NSUInteger trackIndex = [[self.looper allTracks] indexOfObject:track];
+    [cell updateForTrack:track currentTime:self.looper.baseTrack.currentTime deleteBlock:^{
+        NSUInteger trackIndex = [[weakSelf.looper allTracks] indexOfObject:track];
         [weakSelf.looper deleteTrack:track];
+        weakSelf.tracks = weakSelf.looper.allTracks;
         [weakSelf.collectionView deleteItemsAtIndexPaths:@[[NSIndexPath indexPathForItem:trackIndex inSection:0]]];
     }];
     return cell;
@@ -214,7 +226,7 @@
 
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    DMTrack *track = [self.looper allTracks][indexPath.item];
+    DMTrack *track = self.tracks[indexPath.item];
     [self.looper muteTrack:track muted:!track.isMuted];
     [self.collectionView reloadItemsAtIndexPaths:@[indexPath]];
 }

@@ -15,7 +15,6 @@ extern NSString *const DMTrackCellKey;
 
 -(void)updateForTrack:(DMTrack*)track
           currentTime:(NSTimeInterval)currentTime
-         baseDuration:(NSTimeInterval)baseDuration
           deleteBlock:(void (^)())deleteBlock;
 
 -(void)updateForTime:(NSTimeInterval)time;

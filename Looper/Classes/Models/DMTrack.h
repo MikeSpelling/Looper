@@ -18,12 +18,12 @@
 
 @interface DMTrack : NSObject <NSCoding>
 
--(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url;
+-(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url baseDuration:(NSTimeInterval)baseDuration;
 -(instancetype)initAsBaseTrackWithUrl:(NSURL*)url delegate:(id<DMBaseTrackDelegate>)delegate;
 @property (nonatomic, weak) id<DMBaseTrackDelegate> baseTrackDelegate;
 
 -(void)createPlayers;
--(void)playAtTime:(NSTimeInterval)time baseDuration:(NSTimeInterval)baseDuration;
+-(void)playAtTime:(NSTimeInterval)time;
 -(void)stopPlayback;
 
 -(BOOL)isPlaying;
@@ -31,6 +31,7 @@
 
 @property (nonatomic, assign, readonly) NSTimeInterval offset;
 @property (nonatomic, assign, readonly) NSTimeInterval duration;
+@property (nonatomic, assign, readonly) NSTimeInterval baseDuration;
 @property (nonatomic, strong, readonly) NSURL *url;
 @property (nonatomic, assign) BOOL isBaseTrack;
 @property (nonatomic, assign) BOOL isMuted;

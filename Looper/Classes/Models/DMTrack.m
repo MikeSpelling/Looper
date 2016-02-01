@@ -14,6 +14,7 @@ NSString *const DMTrackDurationCodingKey = @"DMTrackDurationCodingKey";
 NSString *const DMTrackIsBaseTrackCodingKey = @"DMTrackIsBaseTrackCodingKey";
 NSString *const DMTrackIsMutedCodingKey = @"DMTrackIsMutedCodingKey";
 NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
+NSString *const DMTrackBaseDurationCodingKey = @"DMTrackBaseDurationCodingKey";
 
 @interface DMTrack()
 @property (nonatomic, strong) dispatch_source_t timer;
@@ -26,12 +27,13 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 
 @implementation DMTrack
 
--(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url
+-(instancetype)initWithOffset:(NSTimeInterval)offset url:(NSURL*)url baseDuration:(NSTimeInterval)baseDuration
 {
     if (self = [super init]) {
         _offset = offset;
         _url = url;
         _volume = 0.8;
+        _baseDuration = baseDuration;
     }
     return self;
 }
@@ -48,23 +50,50 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     return self;
 }
 
--(void)playAtTime:(NSTimeInterval)time baseDuration:(NSTimeInterval)baseDuration
+#pragma mark NSCoding
+
+-(id)initWithCoder:(NSCoder *)decoder
+{
+    if (self = [super init]) {
+        _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
+        _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
+        _duration = [decoder decodeDoubleForKey:DMTrackDurationCodingKey];
+        _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
+        _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
+        _volume = [decoder decodeFloatForKey:DMTrackVolumeCodingKey];
+        _baseDuration = [decoder decodeDoubleForKey:DMTrackBaseDurationCodingKey];
+        
+        [self createPlayers];
+    }
+    return self;
+}
+
+-(void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
+    [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
+    [encoder encodeDouble:self.duration forKey:DMTrackDurationCodingKey];
+    [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
+    [encoder encodeBool:self.isMuted forKey:DMTrackIsMutedCodingKey];
+    [encoder encodeFloat:self.volume forKey:DMTrackVolumeCodingKey];
+    [encoder encodeDouble:self.baseDuration forKey:DMTrackBaseDurationCodingKey];
+}
+
+
+#pragma mark - DMTrack
+
+-(void)playAtTime:(NSTimeInterval)time
 {
     if (!self.player1) {
         [self createPlayers];
     }
     
-    NSLog(@"\n\n");
-    NSLog(@"%@ Play - time %f", self.isBaseTrack ? @"Base track" : @"Extra track", time);
-    
     // Check whether should already be playing (wrapped track)
     if (!self.isBaseTrack && !self.isPlaying) {
-        NSTimeInterval wrappedEndTime = self.offset + self.duration - baseDuration;
-        NSLog(@"Wrapped end time %F", wrappedEndTime);
+        NSTimeInterval wrappedEndTime = self.offset + self.duration - self.baseDuration;
         if (time < wrappedEndTime) {
             AVAudioPlayer *player = self.freePlayer;
-            NSLog(@"SO %@ play at %f", player, baseDuration - self.offset + time);
-            player.currentTime = baseDuration - self.offset + time;
+            player.currentTime = self.baseDuration - self.offset + time;
             [player play];
         }
     }
@@ -74,11 +103,9 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     AVAudioPlayer *player = self.freePlayer;
     if (adjustedTime <= 0) {
         player.currentTime = -adjustedTime;
-        NSLog(@"%@ play %f", player, -adjustedTime);
         [player play];
     }
     else {
-        NSLog(@"%@ play in %f", player, adjustedTime);
         [player playAtTime:player.deviceCurrentTime+adjustedTime];
     }
     
@@ -124,7 +151,8 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     self.player1 = [[AVAudioPlayer alloc] initWithContentsOfURL:self.url error:nil];
     self.player1.numberOfLoops = self.isBaseTrack ? -1 : 0;
     [self.player1 prepareToPlay];
-    _duration = self.player1.duration;
+    if (!_duration) _duration = self.player1.duration;
+    if (self.isBaseTrack && !_baseDuration) _baseDuration = _duration;
     
     // May need to overlap if not a base track, needs second player
     if (!self.isBaseTrack) {
@@ -203,34 +231,6 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
 }
 
 
-#pragma mark - NSCoding
-
--(void)encodeWithCoder:(NSCoder *)encoder
-{
-    [encoder encodeObject:self.url forKey:DMTrackUrlCodingKey];
-    [encoder encodeDouble:self.offset forKey:DMTrackOffsetCodingKey];
-    [encoder encodeDouble:self.duration forKey:DMTrackDurationCodingKey];
-    [encoder encodeBool:self.isBaseTrack forKey:DMTrackIsBaseTrackCodingKey];
-    [encoder encodeBool:self.isMuted forKey:DMTrackIsMutedCodingKey];
-    [encoder encodeFloat:self.volume forKey:DMTrackVolumeCodingKey];
-}
-
--(id)initWithCoder:(NSCoder *)decoder
-{
-    if (self = [super init]) {
-        _url = [decoder decodeObjectForKey:DMTrackUrlCodingKey];
-        _offset = [decoder decodeDoubleForKey:DMTrackOffsetCodingKey];
-        _duration = [decoder decodeDoubleForKey:DMTrackDurationCodingKey];
-        _isBaseTrack = [decoder decodeBoolForKey:DMTrackIsBaseTrackCodingKey];
-        _isMuted = [decoder decodeBoolForKey:DMTrackIsMutedCodingKey];
-        _volume = [decoder decodeFloatForKey:DMTrackVolumeCodingKey];
-        
-        [self createPlayers];
-    }
-    return self;
-}
-
-
 #pragma mark - Equality
 
 -(BOOL)isEqualToTrack:(id)object
@@ -251,6 +251,10 @@ NSString *const DMTrackVolumeCodingKey = @"DMTrackVolumeCodingKey";
     }
     
     if (fabs(track.duration-self.duration) > 0.0001) {
+        return NO;
+    }
+    
+    if (fabs(track.baseDuration-self.baseDuration) > 0.0001) {
         return NO;
     }
     

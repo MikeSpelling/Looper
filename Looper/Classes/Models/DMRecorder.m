@@ -33,9 +33,10 @@ NSUInteger const DMTrackBitDepth = 16;
 
 @implementation DMRecorder
 
--(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate
+-(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate baseTrack:(DMTrack*)baseTrack
 {
     if (self = [super init]) {
+        _baseTrack = baseTrack;
         _recordDelegate = recordDelegate;
         _recordersToDelete = [NSMutableArray new];
         
@@ -78,7 +79,7 @@ NSUInteger const DMTrackBitDepth = 16;
 {
     if (!self.stopRequested) {
         [self startRecording];
-        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url];
+        self.recordingTrack = [[DMTrack alloc] initWithOffset:self.baseTrack.currentTime url:self.recorder.url baseDuration:self.baseTrack.duration];
     }
 }
 
@@ -146,6 +147,7 @@ NSUInteger const DMTrackBitDepth = 16;
     [self.preparedRecorder stop];
     self.recorder = nil;
     self.preparedRecorder = nil;
+    self.recordingTrack = nil;
     
     for (AVAudioRecorder *recorder in self.recordersToDelete) {
         [recorder deleteRecording];

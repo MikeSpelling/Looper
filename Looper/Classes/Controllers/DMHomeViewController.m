@@ -36,6 +36,7 @@
 {
     [super viewWillAppear:animated];
     
+#warning Crash when closing Loop VC after deleting track ? - FIXED?
     self.savedLoopers = [self.looperService loopers];
     [self.collectionView reloadData];
 }
@@ -59,7 +60,8 @@
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     DMSavedLoopCell *cell = [self.collectionView dequeueReusableCellWithReuseIdentifier:DMSavedLoopCellKey forIndexPath:indexPath];
-    DMLooper *looper = self.savedLoopers[indexPath.item];
+    
+    __weak typeof(DMLooper*) looper = self.savedLoopers[indexPath.item];
     cell.label.text = looper.title;
     
     __weak typeof (self)weakSelf = self;

@@ -58,11 +58,6 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     _baseTrack.baseTrackDelegate = self;
 }
 
--(void)dealloc
-{
-    [UIApplication sharedApplication].idleTimerDisabled = NO;
-}
-
 
 #pragma mark - DMLooper
 
@@ -72,9 +67,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
     [self.audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
     [self.audioSession setActive:YES error:nil];
     
-    _recorder = [[DMRecorder alloc] initWithRecordDelgate:self];
-    
-    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    _recorder = [[DMRecorder alloc] initWithRecordDelgate:self baseTrack:self.baseTrack];
 }
 
 -(void)startRecording
@@ -102,7 +95,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)play
 {    
-    [self.baseTrack playAtTime:0 baseDuration:self.baseTrack.duration];
+    [self.baseTrack playAtTime:0];
     [self scheduleExtraTracksForPlayback];
 }
 
@@ -141,12 +134,16 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 
 -(void)tearDown
 {
-    for (DMTrack *track in [self allTracks]) {
+    for (DMTrack *track in [[self allTracks] copy]) {
         [track stopPlayback];
     }
+    self.baseTrack = nil;
+    self.extraTracks = nil;
+    
     [self.recorder tearDown];
     
     [self.audioSession setActive:NO error:nil];
+    self.audioSession = nil;
 }
 
 -(NSArray*)recordedTracks
@@ -189,7 +186,7 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 -(void)scheduleExtraTracksForPlayback
 {
     for (DMTrack *track in [self.extraTracks copy]) {
-        [track playAtTime:self.baseTrack.currentTime baseDuration:self.baseTrack.duration];
+        [track playAtTime:self.baseTrack.currentTime ];
     }
 }
 
@@ -205,12 +202,12 @@ NSString *const DMLooperExtraTracksCodingKey = @"DMLooperExtraTracksCodingKey";
 {
     if (!self.baseTrack) {
         self.baseTrack = track;
-        [self.baseTrack playAtTime:0 baseDuration:self.baseTrack.duration];
+        [self.baseTrack playAtTime:0];
     }
     else {
         [self.extraTracks addObject:track];
         if (track.offset >= self.baseTrack.currentTime) {
-            [track playAtTime:track.offset - self.baseTrack.currentTime baseDuration:self.baseTrack.duration];
+            [track playAtTime:track.offset - self.baseTrack.currentTime];
         }
     }
     

@@ -16,7 +16,7 @@
 
 @interface DMRecorder : NSObject
 
--(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate;
+-(instancetype)initWithRecordDelgate:(id<DMRecorderDelegate>)recordDelegate baseTrack:(DMTrack*)baseTrack;
 
 -(void)recordBaseTrack:(id<DMBaseTrackDelegate>)delegate;
 -(void)startRecordingNextTrack;
