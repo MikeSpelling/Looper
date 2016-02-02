@@ -36,7 +36,6 @@
 {
     [super viewWillAppear:animated];
     
-#warning Crash when closing Loop VC after deleting track ? - FIXED?
     self.savedLoopers = [self.looperService loopers];
     [self.collectionView reloadData];
 }

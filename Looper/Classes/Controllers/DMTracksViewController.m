@@ -68,6 +68,7 @@
     [super viewWillDisappear:animated];
     
     [self.looper tearDown];
+    [self stopTimer];
 }
 
 
